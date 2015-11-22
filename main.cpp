@@ -10,8 +10,7 @@ L 1
 F
 E
  */
-
-
+#include "Disco.h"
 int main()
 {
     struct Proceso{
