@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1448227959 source:c:\users\abelardo\desktop\desktop\abelardo\microsoft\proyectos c++\simuladordememoria\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+
