@@ -23,7 +23,6 @@ public:
 	void guardarEnAreaSwap(struct Pagina pagina)
 	{
 		int posicion = 0;
-		bool hayEspacioVacio = false;
 		while(!tabla[posicion].estaVacio && posicion<512)
 		{
 			posicion++;
@@ -39,11 +38,44 @@ public:
 		}
 	}
 
-	struct Pagina sacarDeAreaSwap()
-	{}
+	struct Pagina sacarDeAreaSwap(string nombrePro, int numeroPag)
+	{
+		int posicion = 0;
+		while(!((tabla[posicion].pagina.nombreProceso != nombrePro) && 
+			(tabla[posicion].pagina.numeroPagina != numeroPag)) 
+			&& posicion<512)
+		{
+			posicion++;
+		}
+		if(!tabla[posicion-1].estaVacio)
+			cout<<"No se encontro el Proceso"<<endl;
+		else
+		{
+			tabla[posicion].estaVacio = true;
+			areaSwap[posicion*8] = "";
+			areaSwap[(posicion*8)+7] = "";
+		}
 
-	void liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string nombreProceso)
-	{}
+	}
+
+	void liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string nombrePro)
+	{
+		vector <struct Pagina> *vectorPaginas = &paginasLiberadasSwap;
+		bool seEncontro = false;
+		for(int posicion=0; posicion<512; posicion++)
+		{
+			if (tabla[posicion].pagina.nombreProceso == nombrePro)
+			{
+				seEncontro = true;
+				tabla[posicion].estaVacio = true;
+				areaSwap[posicion*8] = "";
+				areaSwap[(posicion*8)+7] = "";
+				vectorPaginas->push_back(tabla[posicion].pagina);
+			}
+		}
+		if(!seEncontro)
+			cout<<"No se encontro el Proceso"<<endl;
+	}
 
 private:
     struct Espacio tabla[512];
