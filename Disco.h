@@ -7,20 +7,47 @@
 
 struct Pagina
 {
-    string string nombreProceso;
+    string nombreProceso;
     int marcoPagina, bitReferencia, bitModificacion, numeroPagina, bitResidencia;
+};
+
+struct Espacio
+{
+	struct Pagina pagina;
+	bool estaVacio = true;
 };
 
 class Disco
 {
 public:
-	void guardarEnAreaSwap(Pagina pag);
-	Pagina sacarDeAreaSwap();
-	void liberarProceso(vector <Pagina> &paginasLiberadasSwap, string nombre);
+	void guardarEnAreaSwap(struct Pagina pagina)
+	{
+		int posicion = 0;
+		bool hayEspacioVacio = false;
+		while(!tabla[posicion].estaVacio && posicion<512)
+		{
+			posicion++;
+		}
+		if(!tabla[posicion-1].estaVacio)
+			cout<<"Memoria de Disco Duro llena"<<endl;
+		else
+		{
+			tabla[posicion].pagina = pagina;
+			tabla[posicion].estaVacio = false;
+			areaSwap[posicion*8] = "Pagina: " + pagina.nombreProceso;
+			areaSwap[(posicion*8)+7] = "FIN de pagina: " + pagina.nombreProceso;
+		}
+	}
+
+	struct Pagina sacarDeAreaSwap()
+	{}
+
+	void liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string nombreProceso)
+	{}
 
 private:
-    Pagina tabla[]=new[512];
-    string areaSwap[]=new[4096];
+    struct Espacio tabla[512];
+    string areaSwap[4096];
 };
 
 
