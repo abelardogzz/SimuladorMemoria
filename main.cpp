@@ -1,7 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <time.h>
+#include <vector>
 using namespace std;
+#include "Memoria.h"
 /**
  *Archivo prueba
 P 2048 3
@@ -10,73 +13,113 @@ L 1
 F
 E
  */
-#include "Disco.h"
+/**
+ *Estructura Pagina que define las caracteristicas de una pagina
+ *las cuales son utilizadas por los procesos
+ *
+*/
+struct Pagina {
+        string nombreProceso;
+        int marcoPagina, bitReferencia, bitModificacion,
+            numeroPagina, bitResidencia;
+        };
+/**
+ *Estructura que define las caracteristicas de un proceso
+ *con el proposito de llevar un registro de cuando entra y sale
+ *cada proceso en memoria
+*/
+struct Proceso{
+        string nombreProceso;
+        time_t tiempollegada;
+        time_t tiempoSalida;
+        int numPageFaults;
+    };
 int main()
 {
-    struct Proceso{
-        string ProcesoID;
+    //Vectores de control de procesos
+    vector <Pagina> paginasSwappeadas; //Contador de cantidad de Page Faults
+    vector <Proceso> procesosSesion;
+    vector <Pagina> paginasLiberadasEnSwap, paginasLiberadasEnMemoria;
 
-    };
-    ifstream ArchEntrada;
+    //Variables que definen el comportamiento de la memoria, RAM
+    //Memoria RAM;
+
+    ifstream ArchEntrada;//Archivo de Entrada, define las instrucciones
     ArchEntrada.open("Instrucciones.txt");
-    string operacion;
-    string procesID,op;
+    //Declaraciones de caracteriticas de los procesos
+    string nombreProceso,op;
     int bytes,dirVirtual;
-    int pos,bitLecMod;
+    time_t tiempoaux,difftiempo;
+    int bitLecMod;
+    bool acceso=false;
 
-    //while (getline(ArchEntrada,operacion))//Lectura de archivo linea por linea
-    while (ArchEntrada>>op)//Lectura de archivo linea por linea
-    {
-        operacion="ZONAAA #$ 1";
-        pos = operacion.find(" ");
-        //op= operacion.substr(0,pos).c_str();
-        operacion.erase(0,pos);
+    while (ArchEntrada>>op)//Lectura de archivo, la primer letra,
+    {//La primer letra determina cual es la operacion a realizar
+
         if(op == "P")
-        {
-            pos = operacion.find(" ");
-            //bytes = (operacion.substr(0,pos));
+        {//Operacion de iniciar un nuevo proceso
             ArchEntrada>>bytes;
-            ArchEntrada >> procesID;
+            ArchEntrada >> nombreProceso;
             if(bytes>2048)
-            {
-                cout<<"Proceso: "<<procesID<<" No cabe en memoria"<<endl;
-
-            }
+                cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
             else
-                cout<<"Tamaño de proceso: "<<bytes<<" ID "<<procesID<<endl;
-            operacion.erase(0,pos);
-
+            {
+                cout<<"Tamaño de proceso: "<<bytes<<" ID "<<nombreProceso<<endl;
+                //RAM.cargaProceso(int bytes,string processID, vector paginasSwappeadas);
+                //Agregacion al vector de procesos
+                Proceso pro;
+                pro.nombreProceso = nombreProceso;
+                pro.tiempollegada = time(&tiempoaux);
+                procesosSesion.push_back(pro);
+            }
         }
         else if(op == "A")
-        {
+        {//Operacion de acceso a un nuevo proceso
             ArchEntrada>>dirVirtual;
-            ArchEntrada >> procesID;
+            ArchEntrada >> nombreProceso;
             ArchEntrada >> bitLecMod;
-            cout<<"DirVirtual: "<<dirVirtual<<" ID: "<<procesID<<" Lectura/Modificacion: "<< bitLecMod<<endl;
+            //cout<<"DirVirtual: "<<dirVirtual<<" ID: "<<nombreProceso<<" Lectura/Modificacion: "<< bitLecMod<<endl;
+            //acceso = RAM.accesoProceso(int dirVirtual, string nombreProceso, int bitLecMod);
+            if(acceso)
+            {
+                for(int i=0;i<procesosSesion.size();i++)
+                {
+                    if(procesosSesion[i].nombreProceso == nombreProceso)
+                        procesosSesion[i].numPageFaults ++;
+                }
+            }
+            acceso =false;
+
         }
         else if(op == "L")
-        {
-            ArchEntrada >> procesID;
-            cout<<"Libera proceso: "<<procesID<<endl;
+        {//Operacion de liberacion de memoria, ocupada por un proceso
+            ArchEntrada >> nombreProceso;
+            //cout<<"Libera proceso: "<<nombreProceso<<endl;
+            //RAM.liberaProceso(string nombreProceso, vector paginasLiberadasEnSwap, vector paginasLiberadasEnMemoria);
+            for(int i=0; i < procesosSesion.size();i++)
+            {
+                if(procesosSesion[i].nombreProceso == nombreProceso)
+                    {
+                        procesosSesion[i].tiempoSalida = time(&tiempoaux);
+                    }
+            }
+
         }
         else if(op == "F")
-        {
+        {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
             cout<<"RESUMEN DE INTRUCCIONES"<<endl;
             //Finaliza una secuencia de isnturcciones
         }
         else if(op == "E")
-        {
-            cout<<"FIN DE PROGRAMA, BYE."<<endl;
+        {//Terminacion del programa
+            cout<<"FIN DE PROGRAMA"<<endl;
         }
         else
-        {
-            cout<<"*******Operacion invalida*******"<<endl;
+        {//Mensaje de error al recibir un comando no registrado como valido
+            cout<<"*Operacion invalida"<<endl;
+            cout<<"Posibles comandos: \nP(iniciar un proceso), \nA(acessar un proceso, \nL(liberar un proceso reigstrado)"<<endl;
         }
-//        cout<<"HOLAMUDNO"<<endl;
-
-
     }
-//    cout<<"HOLAMUDNO+++++"<<endl;
 
     ArchEntrada.close();
 
