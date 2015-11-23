@@ -103,6 +103,17 @@ private:
     */
     void swapOut(string nombreProceso,int bytes,int numSwapsNecesarios,vector <struct Pagina> &paginasSwappeadas);
 
+    /**
+      Método que se encarga de meter las paginas necesarias dado un número de bytes para un proceso
+
+      @bytesProceso el total de bytes que guardaremos en memoria
+
+      @nombreProceso el nombre del proceso
+
+      @return void
+    */
+    void meterPaginasDeProceso(int bytesProceso,string nombreProceso);
+
 
 
 };
@@ -126,34 +137,8 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   int numPaginasRequeridas = bytesProceso/8;
 
   //Si hay espacio en memoria real, asigno las paginas
-  if  (numPaginasRequeridas <= paginasLibres){
-    //Por cada pagina, hare una iteracion para buscar posiciones libres en la tabla de paginas
-    for (int numPagina = 0; numPagina < numPaginasRequeridas; numPagina++){
-      for(int posicion=0; posicion<256; posicion+8)
-      {
-        if (tablaPaginas[posicion].estaVacio)
-        {
-          //Le asigno a esa pagina los valores iniciales
-          tablaPaginas[posicion].pagina.numeroPagina = numPagina;
-          tablaPaginas[posicion].pagina.marcoPagina = posicion;
-          tablaPaginas[posicion].pagina.nombreProceso = nombreProceso;
-          tablaPaginas[posicion].pagina.bitReferencia = 0;
-          tablaPaginas[posicion].pagina.bitModificacion = 0 ;
-          tablaPaginas[posicion].pagina.bitResidencia = 1;
-
-          //Ya no está vacío ese marco
-          tablaPaginas[posicion].estaVacio = false;
-
-          //En memoria le pongo strings, solo para facilitar el debugging
-          memoria[posicion*8] = "Proceso "+nombreProceso;
-          memoria[(posicion*8)+7] = "Fin de proceso "+nombreProceso;
-
-          //Meto en la queue esta pagina, pues es la que sacaremos si es que se ocupa hacer un swap out
-          this->queuePaginas.push(tablaPaginas[posicion].pagina);
-          break;
-        }
-      }
-    }
+  if  (numPaginasRequeridas <= this->paginasLibres){
+    this->meterPaginasDeProceso(bytesProceso,nombreProceso);
   }
   //Si no hay espacio disponible, hay que swappear-out
   else{
@@ -163,27 +148,66 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
     //vectorPaginasSwappeadas->push_back(tabla[posicion].pagina);
   }
 
-
-
-
-
-
 }
 
 void Memoria::swapOut(string nombreProceso,int bytes,int numSwapsNecesarios,vector <struct Pagina> &paginasSwappeadas){
 
-  //Hago los swap outs necesarios
+  vector <struct Pagina> *vecPaginasSwappeadas = &paginasSwappeadas;
+  //Hago los swap outs necesarios, para liberar memoria
   for (int i=0;i<numSwapsNecesarios;i++){
 
       //this->tablaPaginas[i].
-      struct Pagina paginaASacada = this->queuePaginas.front();
+      struct Pagina paginaASacar = this->queuePaginas.front();
       this->queuePaginas.pop();
-      //this->disco.guardarEnAreaSwap(paginaASacada);
+      this->tablaPaginas[paginaASacar.marcoPagina].estaVacio = true;
+      vecPaginasSwappeadas->push_back(paginaASacar);
 
+      //Se limpia la memoria
+      this->memoria[paginaASacar.marcoPagina*8] = "";
+      this->memoria[(paginaASacar.marcoPagina*8)+7] = "";
+
+      this->paginasLibres++;
+      this->totalSwapOuts++;
+      //this->disco.guardarEnAreaSwap(paginaASacar);
   }
+  //Una vez liberada la memoria, ahora si se meten las paginas del proceso
+  this->meterPaginasDeProceso(bytes,nombreProceso);
+
 
 }
 
+void Memoria::meterPaginasDeProceso(int bytesProceso,string nombreProceso){
+  //Calculo la cantidad de paginas que requerira la asignacion de ese proceso
+  int numPaginasRequeridas = bytes/8;
 
+    //Por cada pagina, hare una iteracion para buscar posiciones libres en la tabla de paginas
+    for (int numPagina = 0; numPagina < numPaginasRequeridas; numPagina++){
+      for(int posicion=0; posicion<256; posicion+8)
+      {
+        if (this->tablaPaginas[posicion].estaVacio)
+        {
+          //Le asigno a esa pagina los valores iniciales
+          this->tablaPaginas[posicion].pagina.numeroPagina = numPagina;
+          this->tablaPaginas[posicion].pagina.marcoPagina = posicion;
+          this->tablaPaginas[posicion].pagina.nombreProceso = nombreProceso;
+          this->tablaPaginas[posicion].pagina.bitReferencia = 0;
+          this->tablaPaginas[posicion].pagina.bitModificacion = 0 ;
+          this->tablaPaginas[posicion].pagina.bitResidencia = 1;
+
+          //Ya no está vacío ese marco
+          this->tablaPaginas[posicion].estaVacio = false;
+
+          //En memoria le pongo strings, solo para facilitar el debugging
+          this->memoria[posicion*8] = "Proceso "+nombreProceso;
+          this->memoria[(posicion*8)+7] = "Fin de proceso "+nombreProceso;
+
+          //Meto en la queue esta pagina, pues es la que sacaremos si es que se ocupa hacer un swap out
+          this->queuePaginas.push(tablaPaginas[posicion].pagina);
+          this->paginasLibres--;
+          break;
+        }
+      }
+    }
+}
 
 #endif // MEMORIA_H_INCLUDED

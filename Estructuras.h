@@ -9,12 +9,10 @@ struct Pagina {
            numeroPagina, bitResidencia;
 };
 
-
 /**
 *Estructura Espacio que define los espacios de memoria de la tabla de paginas
 *
 */
-
 struct Espacio
 {
 	struct Pagina pagina;
