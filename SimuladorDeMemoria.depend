@@ -1,6 +1,11 @@
 # depslib dependency file v1.0
-1448227959 source:c:\users\abelardo\desktop\desktop\abelardo\microsoft\proyectos c++\simuladordememoria\main.cpp
+1448250139 source:c:\users\abelardo\desktop\desktop\abelardo\microsoft\proyectos c++\simuladordememoria\main.cpp
 	<iostream>
 	<fstream>
 	<string>
+	<time.h>
+	<vector>
+	"Memoria.h"
+
+1448231827 c:\users\abelardo\desktop\desktop\abelardo\microsoft\proyectos c++\simuladordememoria\memoria.h
 

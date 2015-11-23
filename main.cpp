@@ -42,7 +42,7 @@ int main()
     vector <Pagina> paginasLiberadasEnSwap, paginasLiberadasEnMemoria;
 
     //Variables que definen el comportamiento de la memoria, RAM
-    //Memoria RAM;
+    //Memoria RAM = new Memoria();
 
     ifstream ArchEntrada;//Archivo de Entrada, define las instrucciones
     ArchEntrada.open("Instrucciones.txt");
@@ -105,6 +105,7 @@ int main()
                     }
             }
 
+
         }
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
@@ -116,15 +117,17 @@ int main()
                 if(procesosSesion[i].tiempoSalida != NULL)
                 {
                     contProcesosTerminados++;
+                    cout<<procesosSesion[i].tiempoSalida<<" TIEMPOS "<<procesosSesion[i].tiempollegada<<endl;
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
-                    cout<<"Turnaround: "<< turnaroundProceso;
+
+                    cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
                     cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
                     cout<<" PageFaults: "<<procesosSesion[i].numPageFaults<<endl;
                     turnaroundTotal += turnaroundProceso;
 
                 }
             }
-            cout<<"Turnaround Promedio: "<<turnaroundTotal / contProcesosTerminados<<endl;
+            cout<<"Turnaround Promedio: "<<(turnaroundTotal / contProcesosTerminados)<<endl;
             //cout<<"Total Swapp-in's: "<< RAM.getSwapin()<<endl;
             //cout<<"Total Swapp-out's: "<< RAM.getSwapout()<<endl;
         }
