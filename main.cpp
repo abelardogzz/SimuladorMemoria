@@ -49,8 +49,9 @@ int main()
     //Declaraciones de caracteriticas de los procesos
     string nombreProceso,op;
     int bytes,dirVirtual;
-    time_t tiempoaux,difftiempo;
+    time_t tiempoaux;
     int bitLecMod;
+    double turnaroundTotal;//8====================================================================D
     bool acceso=false;
 
     while (ArchEntrada>>op)//Lectura de archivo, la primer letra,
@@ -108,7 +109,24 @@ int main()
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
             cout<<"RESUMEN DE INTRUCCIONES"<<endl;
+            int contProcesosTerminados=0,turnaroundProceso;
             //Finaliza una secuencia de isnturcciones
+            for(int i=0; i < procesosSesion.size();i++)
+            {
+                if(procesosSesion[i].tiempoSalida != NULL)
+                {
+                    contProcesosTerminados++;
+                    turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
+                    cout<<"Turnaround: "<< turnaroundProceso;
+                    cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
+                    cout<<" PageFaults: "<<procesosSesion[i].numPageFaults<<endl;
+                    turnaroundTotal += turnaroundProceso;
+
+                }
+            }
+            cout<<"Turnaround Promedio: "<<turnaroundTotal / contProcesosTerminados<<endl;
+            //cout<<"Total Swapp-in's: "<< RAM.getSwapin()<<endl;
+            //cout<<"Total Swapp-out's: "<< RAM.getSwapout()<<endl;
         }
         else if(op == "E")
         {//Terminacion del programa
