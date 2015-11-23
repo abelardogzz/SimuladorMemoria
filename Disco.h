@@ -5,17 +5,6 @@
 #include <vector>
 #include <string>
 
-struct Pagina
-{
-    string nombreProceso;
-    int marcoPagina, bitReferencia, bitModificacion, numeroPagina, bitResidencia;
-};
-
-struct Espacio
-{
-	struct Pagina pagina;
-	bool estaVacio = true;
-};
 
 class Disco
 {
@@ -41,8 +30,8 @@ public:
 	struct Pagina sacarDeAreaSwap(string nombrePro, int numeroPag)
 	{
 		int posicion = 0;
-		while(!((tabla[posicion].pagina.nombreProceso != nombrePro) && 
-			(tabla[posicion].pagina.numeroPagina != numeroPag)) 
+		while(!((tabla[posicion].pagina.nombreProceso != nombrePro) &&
+			(tabla[posicion].pagina.numeroPagina != numeroPag))
 			&& posicion<512)
 		{
 			posicion++;

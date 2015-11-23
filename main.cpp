@@ -4,42 +4,17 @@
 #include <time.h>
 #include <vector>
 using namespace std;
+#include "Estructuras.h"
 #include "Memoria.h"
-/**
- *Archivo prueba
-P 2048 3
-A 1 1 0
-L 1
-F
-E
- */
-/**
- *Estructura Pagina que define las caracteristicas de una pagina
- *las cuales son utilizadas por los procesos
- *
-*/
-struct Pagina {
-        string nombreProceso;
-        int marcoPagina, bitReferencia, bitModificacion,
-            numeroPagina, bitResidencia;
-        };
-/**
- *Estructura que define las caracteristicas de un proceso
- *con el proposito de llevar un registro de cuando entra y sale
- *cada proceso en memoria
-*/
-struct Proceso{
-        string nombreProceso;
-        time_t tiempollegada;
-        time_t tiempoSalida;
-        int numPageFaults;
-    };
+
+
+
 int main()
 {
     //Vectores de control de procesos
-    vector <Pagina> paginasSwappeadas; //Contador de cantidad de Page Faults
-    vector <Proceso> procesosSesion;
-    vector <Pagina> paginasLiberadasEnSwap, paginasLiberadasEnMemoria;
+    vector <struct Pagina> paginasSwappeadas; //Contador de cantidad de Page Faults
+    vector <struct Proceso> procesosSesion;
+    vector <struct Pagina> paginasLiberadasEnSwap, paginasLiberadasEnMemoria;
 
     //Variables que definen el comportamiento de la memoria, RAM
     //Memoria RAM = new Memoria();
@@ -65,7 +40,7 @@ int main()
                 cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
             else
             {
-                cout<<"Tamaño de proceso: "<<bytes<<" ID "<<nombreProceso<<endl;
+                cout<<"Tamaï¿½o de proceso: "<<bytes<<" ID "<<nombreProceso<<endl;
                 //RAM.cargaProceso(int bytes,string processID, vector paginasSwappeadas);
                 //Agregacion al vector de procesos
                 Proceso pro;

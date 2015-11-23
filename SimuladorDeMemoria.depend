@@ -9,3 +9,18 @@
 
 1448231827 c:\users\abelardo\desktop\desktop\abelardo\microsoft\proyectos c++\simuladordememoria\memoria.h
 
+1448256693 source:/Users/Eduardo/Dropbox/Escuela/Semestres/#Semestre 5/Sistemas Operativos/Proyecto/SimuladorMemoria/main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<time.h>
+	<vector>
+	"Memoria.h"
+
+1448256973 /Users/Eduardo/Dropbox/Escuela/Semestres/#Semestre 5/Sistemas Operativos/Proyecto/SimuladorMemoria/Memoria.h
+	<iostream>
+	<queue>
+	<vector>
+	<string>
+	<cmath>
+
