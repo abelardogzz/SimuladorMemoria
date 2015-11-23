@@ -178,7 +178,7 @@ void Memoria::swapOut(string nombreProceso,int bytes,int numSwapsNecesarios,vect
 
 void Memoria::meterPaginasDeProceso(int bytesProceso,string nombreProceso){
   //Calculo la cantidad de paginas que requerira la asignacion de ese proceso
-  int numPaginasRequeridas = bytes/8;
+  int numPaginasRequeridas = bytesProceso/8;
 
     //Por cada pagina, hare una iteracion para buscar posiciones libres en la tabla de paginas
     for (int numPagina = 0; numPagina < numPaginasRequeridas; numPagina++){
