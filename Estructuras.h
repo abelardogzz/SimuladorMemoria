@@ -26,6 +26,7 @@ struct Espacio
 */
 struct Proceso{
         string nombreProceso;
+        int tamano;
         time_t tiempollegada;
         time_t tiempoSalida;
         int numPageFaults;

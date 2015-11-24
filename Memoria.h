@@ -150,9 +150,12 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
       else if (inicio+1!=marcosDePaginaAsignados[i].marcoPagina && final==-1){
         cout << "[" + to_string(inicio) + "-";
       }
+      //Esto significa que ahora se cambio de marco, y se imprime el final pasado y se cambia
+      //el inicio ahora
       else if (inicio+1!=marcosDePaginaAsignados[i].marcoPagina && final!=-1){
         cout <<  to_string(final) + "]";
-        inicio = marcosDePaginaAsignados[i+1].marcoPagina;
+        inicio = marcosDePaginaAsignados[i].marcoPagina;
+        cout << "[" + to_string(inicio) + "-";
         final = -1;
       }
 
@@ -169,7 +172,7 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   else{
     //Determino cuantas paginas quitaré
     int numPaginasAQuitar = ceil(numPaginasRequeridas - paginasLibres);
-    cout << "Num Paginas a Quitar" << numPaginasAQuitar <<endl;
+    cout << "Num Paginas a Quitar :" << numPaginasAQuitar <<endl;
     //this->swapOut();
     //vectorPaginasSwappeadas->push_back(tabla[posicion].pagina);
   }
@@ -184,6 +187,8 @@ void Memoria::accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &
   int paginaDelProceso = dirVirtual/8;
   int offsetDePagina = dirVirtual%8;
   bool encontro = false;
+  struct Pagina *paginaCreada = &paginaNuevaMemoria;
+  struct Pagina *paginaSwappeada = &paginaSacada;
   for (int i=0;i<256;i++){
 
     //Se busca el proceso y su pagina, para saber en donde esta alocado
@@ -191,8 +196,9 @@ void Memoria::accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &
       && this->tablaPaginas[i].pagina.nombreProceso == nombreProceso
       && this->tablaPaginas[i].pagina.numeroPagina == paginaDelProceso ){
           encontro = true;
-          cout << "Direccion virtual del proceso "+ nombreProceso +" es:"+to_string(dirVirtual)+" y su direccion real es:"+
+          cout << "Direccion virtual del proceso "+ nombreProceso +" es: "+to_string(dirVirtual)+" y su direccion real es: "+
           to_string(this->tablaPaginas[i].pagina.marcoPagina*8+offsetDePagina) << endl;
+
           break;
       }
   }
@@ -204,13 +210,55 @@ void Memoria::accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &
 
 }
 
+void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &paginasLiberadasDisco, vector <struct Pagina> &paginasLiberadasMemoria)
+{
+  // vector <struct Pagina>  *vectorPaginasLiberadas= &paginasLiberadasMemoria;
+  vector <struct Pagina>  vectorPaginasLiberadas;
+  //Se hace un ciclo en donde se buscan todas las paginas del proceso
+  for (int i=0;i<256;i++){
+    //Se busca el proceso y su pagina, para saber en donde esta alocado
+    if (!this->tablaPaginas[i].estaVacio && this->tablaPaginas[i].pagina.nombreProceso == nombreProceso){
+          this->tablaPaginas[i].estaVacio = true;
+          vectorPaginasLiberadas.push_back(this->tablaPaginas[i].pagina);
+          this->paginasLibres++;
+      }
+  }
+  int inicio=vectorPaginasLiberadas[0].marcoPagina;
+  int final=-1;
+  cout << "Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
+  for(std::vector<int>::size_type i = 0; i != vectorPaginasLiberadas.size(); i++) {
+    struct Pagina marco = vectorPaginasLiberadas[i];
+    if (inicio+1==vectorPaginasLiberadas[i].marcoPagina){
+      final = vectorPaginasLiberadas[i].marcoPagina;
+    }
+    else if (inicio+1!=vectorPaginasLiberadas[i].marcoPagina && final==-1){
+      cout << "[" + to_string(inicio) + "-";
+    }
+    else if (inicio+1!=vectorPaginasLiberadas[i].marcoPagina && final!=-1){
+      cout <<  to_string(final) + "]";
+      inicio = vectorPaginasLiberadas[i+1].marcoPagina;
+      cout << "[" + to_string(inicio) + "-";
+      final = -1;
+    }
+
+    if (i == vectorPaginasLiberadas.size()-1){
+      final = vectorPaginasLiberadas[i].marcoPagina;
+      cout <<  to_string(final) + "]";
+    }
+
+    inicio = vectorPaginasLiberadas[i].marcoPagina;
+  }
+  cout << endl;
+  //disco.liberarProceso(&paginasLiberadasDisco,nombreProceso);
+
+}
+
 void Memoria::swapOut(string nombreProceso,int bytes,int numSwapsNecesarios,vector <struct Pagina> &paginasSwappeadas){
 
   vector <struct Pagina> *vecPaginasSwappeadas = &paginasSwappeadas;
   //Hago los swap outs necesarios, para liberar memoria
   for (int i=0;i<numSwapsNecesarios;i++){
 
-      //this->tablaPaginas[i].
       struct Pagina paginaASacar = this->queuePaginas.front();
       this->queuePaginas.pop();
       this->tablaPaginas[paginaASacar.marcoPagina].estaVacio = true;
