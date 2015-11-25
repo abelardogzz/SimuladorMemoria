@@ -6,6 +6,7 @@
 using namespace std;
 #include "Estructuras.h"
 #include "Memoria.h"
+#include "Disco.h"
 
 
 
@@ -15,6 +16,7 @@ int main()
     vector <struct Pagina> paginasSwappeadas; //Contador de cantidad de Page Faults
     vector <struct Proceso> procesosSesion;
     vector <struct Pagina> paginasLiberadasEnSwap, paginasLiberadasEnMemoria;
+    struct Pagina Pag1,Pag2;
 
     //Variables que definen el comportamiento de la memoria, RAM
     //Memoria RAM = new Memoria();
@@ -59,21 +61,28 @@ int main()
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso){
                     if(procesosSesion[i].tamano <= dirVirtual){
-                        //acceso = RAM.accesoProceso(int dirVirtual, string nombreProceso, int bitLecMod);
+                        //acceso =true;
+                        procesosSesion[i].numPageFaults ++;
+                        //RAM.accesarProceso(dirVirtual,nombreProceso,pag1,pag2);
+                        //RAM.accesoProceso(int dirVirtual, string nombreProceso, paginasSwappeadas, paginasLiberadasEnSwap);
+                        //Accesar, Lectura o modificacion, numero de paginas de swap
                     }
                     else
                     cout<<"La direccion de memoria no se puede accesar (PAGE OVERFLOW)"<<endl;
                 }
             }
 
-            if(acceso)
+            /*if(acceso)
             {
-                for(int i=0;i<procesosSesion.size();i++)
+                //for(int i=0;i<procesosSesion.size();i++)
+                int i=0;
+                while(procesosSesion[i].nombreProceso != null)
                 {
                     if(procesosSesion[i].nombreProceso == nombreProceso)
                         procesosSesion[i].numPageFaults ++;
+                    i++;
                 }
-            }
+            }*/
             acceso =false;
 
         }
