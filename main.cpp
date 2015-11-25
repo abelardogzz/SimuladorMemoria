@@ -51,11 +51,21 @@ int main()
         }
         else if(op == "A")
         {//Operacion de acceso a un nuevo proceso
-            ArchEntrada>>dirVirtual;
-            ArchEntrada >> nombreProceso;
-            ArchEntrada >> bitLecMod;
+            ArchEntrada>>dirVirtual; //direccion virtual a accesar
+            ArchEntrada >> nombreProceso; //nombre del proceso que se quiere accesar
+            ArchEntrada >> bitLecMod; //modo en que se quiere accesar
             //cout<<"DirVirtual: "<<dirVirtual<<" ID: "<<nombreProceso<<" Lectura/Modificacion: "<< bitLecMod<<endl;
-            //acceso = RAM.accesoProceso(int dirVirtual, string nombreProceso, int bitLecMod);
+            for(int i=0; i< procesosSesion.size(); i++)
+            {
+                if(procesosSesion[i].nombreProceso == nombreProceso){
+                    if(procesosSesion[i].tamano <= dirVirtual){
+                        //acceso = RAM.accesoProceso(int dirVirtual, string nombreProceso, int bitLecMod);
+                    }
+                    else
+                    cout<<"La direccion de memoria no se puede accesar (PAGE OVERFLOW)"<<endl;
+                }
+            }
+
             if(acceso)
             {
                 for(int i=0;i<procesosSesion.size();i++)
