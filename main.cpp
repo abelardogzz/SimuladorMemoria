@@ -40,7 +40,7 @@ int main()
                 cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
             else
             {
-                cout<<"Tama�o de proceso: "<<bytes<<" ID "<<nombreProceso<<endl;
+                cout<<op<<" proceso: "<<bytes<<" ID: "<<nombreProceso<<endl;
                 //RAM.cargaProceso(int bytes,string processID, vector paginasSwappeadas);
                 //Agregacion al vector de procesos
                 Proceso pro;
@@ -54,7 +54,7 @@ int main()
             ArchEntrada>>dirVirtual; //direccion virtual a accesar
             ArchEntrada >> nombreProceso; //nombre del proceso que se quiere accesar
             ArchEntrada >> bitLecMod; //modo en que se quiere accesar
-            //cout<<"DirVirtual: "<<dirVirtual<<" ID: "<<nombreProceso<<" Lectura/Modificacion: "<< bitLecMod<<endl;
+            cout<<op<<" DirVirtual: "<<dirVirtual<<" ID: "<<nombreProceso<<" Lectura/Modificacion: "<< bitLecMod<<endl;
             for(int i=0; i< procesosSesion.size(); i++)
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso){
@@ -80,7 +80,7 @@ int main()
         else if(op == "L")
         {//Operacion de liberacion de memoria, ocupada por un proceso
             ArchEntrada >> nombreProceso;
-            //cout<<"Libera proceso: "<<nombreProceso<<endl;
+            cout<<op<<" Libera proceso: "<<nombreProceso<<endl;
             //RAM.liberaProceso(string nombreProceso, vector paginasLiberadasEnSwap, vector paginasLiberadasEnMemoria);
             for(int i=0; i < procesosSesion.size();i++)
             {
@@ -94,7 +94,7 @@ int main()
         }
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
-            cout<<"RESUMEN DE INTRUCCIONES"<<endl;
+            cout<<op<<"\nRESUMEN DE INTRUCCIONES"<<endl;
             int contProcesosTerminados=0,turnaroundProceso;
             //Finaliza una secuencia de isnturcciones
             for(int i=0; i < procesosSesion.size();i++)
@@ -118,7 +118,7 @@ int main()
         }
         else if(op == "E")
         {//Terminacion del programa
-            cout<<"FIN DE PROGRAMA"<<endl;
+            cout<<op<<"\nFIN DE PROGRAMA"<<endl;
         }
         else
         {//Mensaje de error al recibir un comando no registrado como valido
