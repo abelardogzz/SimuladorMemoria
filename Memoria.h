@@ -86,7 +86,7 @@ private:
 
       @return Pagina
     */
-    struct Pagina swapIn(string nombreProceso,int numPagina);
+    void swapIn(string nombreProceso,int numPagina);
 
     /**
       Se mueve de la memoria real al area swap la(s) pagina(s) que se requiere(n) sacar para meter el proceso
@@ -101,7 +101,7 @@ private:
 
       @return void
     */
-    void swapOut(string nombreProceso,int bytes,int numSwapsNecesarios,vector <struct Pagina> *paginasSwappeadas);
+    void swapOut(int numSwapsNecesarios,vector <struct Pagina> *paginasSwappeadas);
 
     /**
       Método que se encarga de meter las paginas necesarias dado un número de bytes para un proceso
@@ -134,7 +134,7 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   //Calculo la cantidad de paginas que requerira la asignacion de ese proceso
   int numPaginasRequeridas = ceil(bytesProceso/8.0);
   //Si hay espacio en memoria real, asigno las paginas
-  cout << "Paginas requeridas " << numPaginasRequeridas << endl;
+  //cout << "Paginas requeridas " << numPaginasRequeridas << endl;
   if  (numPaginasRequeridas <= this->paginasLibres){
 
   }
@@ -142,18 +142,20 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   else{
     //Determino cuantas paginas quitaré
     int numPaginasAQuitar = ceil(numPaginasRequeridas - paginasLibres);
-    cout << "Num Paginas a Quitar :" << numPaginasAQuitar <<endl;
-    this->swapOut(nombreProceso,bytesProceso,numPaginasAQuitar,vecPaginasSwappeadas);
+    //cout << "Num Paginas a Quitar :" << numPaginasAQuitar <<endl;
+    this->swapOut(numPaginasAQuitar,vecPaginasSwappeadas);
     //vectorPaginasSwappeadas->push_back(tabla[posicion].pagina);
     // struct Pagina paginaIni;
     // struct Pagina paginaFini;
 
   }
+  //A continuacion se meten las paginas del proceso
   vector <struct Pagina> marcosDePaginaAsignados;
   this->meterPaginasDeProceso(bytesProceso,nombreProceso,marcosDePaginaAsignados);
   int inicio=marcosDePaginaAsignados[0].marcoPagina;
   int final=-1;
-  cout << "Se asignaron los siguientes marcos de memoria al proceso " + nombreProceso << endl;
+  cout << "Memoria - Se asignaron los siguientes marcos de memoria al proceso " + nombreProceso << endl;
+
   for(std::vector<int>::size_type i = 0; i != marcosDePaginaAsignados.size(); i++) {
     struct Pagina marco = marcosDePaginaAsignados[i];
     if (inicio+1==marcosDePaginaAsignados[i].marcoPagina){
@@ -207,7 +209,8 @@ void Memoria::accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &
 
   if (!encontro){
     //Se intenta hacer el swap in
-    cout << "¡Esa dirección virtual no corresponde a este proceso!" << endl;
+    //cout << "¡Esa dirección virtual no corresponde a este proceso!" << endl;
+    this->swapIn(nombreProceso,paginaDelProceso);
   }
 
 }
@@ -227,7 +230,7 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
   }
   int inicio=vectorPaginasLiberadas[0].marcoPagina;
   int final=-1;
-  cout << "Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
+  cout << "Memoria - Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
   for(std::vector<int>::size_type i = 0; i != vectorPaginasLiberadas.size(); i++) {
     struct Pagina marco = vectorPaginasLiberadas[i];
     if (inicio+1==vectorPaginasLiberadas[i].marcoPagina){
@@ -255,7 +258,7 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
 
 }
 
-void Memoria::swapOut(string nombreProceso,int bytes,int numSwapsNecesarios,vector <struct Pagina> *paginasSwappeadas){
+void Memoria::swapOut(int numSwapsNecesarios,vector <struct Pagina> *paginasSwappeadas){
 
   vector <struct Pagina> *vecPaginasSwappeadas = paginasSwappeadas;
   //Hago los swap outs necesarios, para liberar memoria
@@ -277,7 +280,6 @@ void Memoria::swapOut(string nombreProceso,int bytes,int numSwapsNecesarios,vect
       this->totalSwapOuts++;
       //this->disco.guardarEnAreaSwap(paginaASacar);
   }
-  //Una vez liberada la memoria, ahora si se meten las paginas del proceso
 
 }
 
@@ -320,6 +322,40 @@ void Memoria::meterPaginasDeProceso(int bytesProceso,string nombreProceso,vector
 
     }
 
+}
+
+void Memoria::swapIn(string nombreProceso,int numPagina){
+  //Saco de Area swap la pagina que quiero, y la pongo
+  struct Pagina *paginaSwappeadaIn;
+
+  vector <struct Pagina> *vecPaginasSwappeadas = new vector <struct Pagina>;
+  //Si no hay paginas libres, hay que swappearOut
+  if (this->paginasLibres==0){
+      this->swapOut(1,vecPaginasSwappeadas);
+  }
+
+  paginaSwappeadaIn = this->disco.sacarDeAreaSwap(nombreProceso,numPagina);
+  //Y la meto manualmente
+  for(int i=0; i<256; i++){
+    if (this->tablaPaginas[i].estaVacio)
+    {
+      //Le asigno a esa pagina los valores iniciales
+      this->tablaPaginas[i].pagina.nombreProceso = paginaSwappeadaIn->nombreProceso;
+      this->tablaPaginas[i].pagina.numeroPagina = paginaSwappeadaIn->numeroPagina;
+      this->tablaPaginas[i].pagina.marcoPagina = i;
+      //this->tablaPaginas[i].pagina. = i;
+      //Ya no está vacío ese marco
+      this->tablaPaginas[i].estaVacio = false;
+      this->paginasLibres--;
+      //Meto en la queue esta pagina, pues es la que sacaremos si es que se ocupa hacer un swap out
+      this->queuePaginas.push(tablaPaginas[i].pagina);
+
+      cout << "Memoria - " <<"Se guardó la página " << this->tablaPaginas[i].pagina.numeroPagina
+      <<" del proceso "<< this->tablaPaginas[i].pagina.nombreProceso << " en el marco de memoria " << i<<endl;
+      break;
+     }
+  }
+  this->totalSwapIns++;
 }
 
 void Memoria::printMemory(){
