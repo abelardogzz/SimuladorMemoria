@@ -6,7 +6,7 @@
 #include <cmath>
 #include <queue>
 #include <string>
-
+#include "Estructuras.h"
 class Disco
 {
 public:
@@ -14,7 +14,7 @@ public:
 	Disco();
 	//Metodos publicos de la clase
 	void guardarEnAreaSwap(struct Pagina pagina);
-	struct Pagina sacarDeAreaSwap(string nombrePro, int numeroPag);
+	void sacarDeAreaSwap(string nombrePro, int numeroPag);
 	void liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string nombrePro);
 
 
@@ -52,7 +52,7 @@ void Disco::guardarEnAreaSwap(struct Pagina pagina)
 		//Se cambia el marco de pagina a la posicion actual en la pagina de memoria
 		tablaPaginas[posicion].pagina.marcoPagina = posicion;
 		//Prueba de funcionalidad de guardado en tabla.
-		cout<<"Memoria Disco - Se guardo el proceso: "<<tablaPaginas[posicion].pagina.nombreProceso<<" en la posicion: "<<posicion<<" del marco de paginas."<<endl;
+		cout<<"Memoria Disco - Se guardo la pagina " << tablaPaginas[posicion].pagina.numeroPagina<<" del proceso: "<<tablaPaginas[posicion].pagina.nombreProceso<<" en la posicion: "<<posicion<<" del marco de paginas."<<endl;
 		//Se notifica que la posicion actual no se encuentra vacia
 		tablaPaginas[posicion].estaVacio = false;
 		paginasLibres--;
@@ -63,18 +63,43 @@ void Disco::guardarEnAreaSwap(struct Pagina pagina)
 	}
 }
 
-struct Pagina Disco::sacarDeAreaSwap(string nombrePro, int numeroPag)
+void Disco::sacarDeAreaSwap(string nombrePro, int numeroPag)
 {
 	int posicion = 0;
+	bool seEncontro = false;
 	//Se hace un ciclo que busca la pagina que tenga el nombre y numero que se pidieron
+
+	for (int i=0;i<512;i++){
+
+        if ((tablaPaginas[i].pagina.nombreProceso == nombrePro) &&
+		(tablaPaginas[i].pagina.numeroPagina == numeroPag) &&
+		!tablaPaginas[i].estaVacio
+		){
+
+            tablaPaginas[i].estaVacio = true;
+
+		//Prueba de funcionalidad De liberar tabla de paginas.
+		cout<<"Memoria Swap - Se libero el marco de pagina: "<<i<<" que contenia la pagina: "<<tablaPaginas[i].pagina.numeroPagina<<endl;
+		paginasLibres++;
+		//Se borra el texto de las posiciones finales e iniciales en memoria
+
+		areaSwap[i*8] = "";
+
+		areaSwap[(i*8)+7] = "";
+
+        break;
+		}
+	}
+/*
 	while((tablaPaginas[posicion].pagina.nombreProceso != nombrePro) &&
-		(tablaPaginas[posicion].pagina.numeroPagina != numeroPag)
+		(tablaPaginas[posicion].pagina.numeroPagina != numeroPag) &&
 		&& posicion<512)
 	{
 		posicion++;
 	}
 	//Si se salio del ciclo por salirse del rango, no se encontro el proceso, por lo tanto se le notifica al usuario.
-	if(!tablaPaginas[posicion-1].estaVacio)
+
+	if(tablaPaginas[posicion].estaVacio || posicion==512)
 		cout<<"No se encontro el Proceso"<<endl;
 	else //Si se encuentra el proceso, se hace el proceso de sacarlo
 	{
@@ -88,7 +113,7 @@ struct Pagina Disco::sacarDeAreaSwap(string nombrePro, int numeroPag)
 		areaSwap[(posicion*8)+7] = "";
 		//Prueba de funcionalidad al liberar rango de memoria.
 	}
-
+*/
 }
 
 void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string nombrePro)
@@ -106,7 +131,7 @@ void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string 
 			//Se notifica que el espacio de la tabla esta vacio para que se pueda sobrescribir sobre el.
 			tablaPaginas[posicion].estaVacio = true;
 			//Prueba de funcionalidad De liberar tabla de paginas.
-			ccout<<"Memoria Disco - Se libero la posicion: "<<posicion<<" en el marco de paginas."<<endl;
+            cout<<"Memoria Disco - Se libero la posicion: "<<posicion<<" en el marco de paginas."<<endl;
 			paginasLibres++;
 			//Se borra el texto de las posiciones finales e iniciales en memoria
 			areaSwap[posicion*8] = "";
@@ -122,4 +147,5 @@ void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string 
 		cout<<"No se encontro el Proceso"<<endl;
 }
 
-#endif // DISCO_H_INCLUDED
+#endif // DISCO_H_INCLUDED DISCO_H_INCLUDED
+
