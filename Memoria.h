@@ -134,7 +134,7 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   //Calculo la cantidad de paginas que requerira la asignacion de ese proceso
   int numPaginasRequeridas = ceil(bytesProceso/8.0);
   //Si hay espacio en memoria real, asigno las paginas
-  cout << "Paginas requeridas " << numPaginasRequeridas << endl;
+  //cout << "Paginas requeridas " << numPaginasRequeridas << endl;
   if  (numPaginasRequeridas <= this->paginasLibres){
 
   }
@@ -142,7 +142,7 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   else{
     //Determino cuantas paginas quitaré
     int numPaginasAQuitar = ceil(numPaginasRequeridas - paginasLibres);
-    cout << "Num Paginas a Quitar :" << numPaginasAQuitar <<endl;
+    //cout << "Num Paginas a Quitar :" << numPaginasAQuitar <<endl;
     this->swapOut(nombreProceso,bytesProceso,numPaginasAQuitar,vecPaginasSwappeadas);
     //vectorPaginasSwappeadas->push_back(tabla[posicion].pagina);
     // struct Pagina paginaIni;
@@ -153,7 +153,7 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   this->meterPaginasDeProceso(bytesProceso,nombreProceso,marcosDePaginaAsignados);
   int inicio=marcosDePaginaAsignados[0].marcoPagina;
   int final=-1;
-  cout << "Se asignaron los siguientes marcos de memoria al proceso " + nombreProceso << endl;
+  cout << "Memoria - Se asignaron los siguientes marcos de memoria al proceso " + nombreProceso << endl;
   for(std::vector<int>::size_type i = 0; i != marcosDePaginaAsignados.size(); i++) {
     struct Pagina marco = marcosDePaginaAsignados[i];
     if (inicio+1==marcosDePaginaAsignados[i].marcoPagina){
@@ -227,7 +227,7 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
   }
   int inicio=vectorPaginasLiberadas[0].marcoPagina;
   int final=-1;
-  cout << "Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
+  cout << "Memoria - Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
   for(std::vector<int>::size_type i = 0; i != vectorPaginasLiberadas.size(); i++) {
     struct Pagina marco = vectorPaginasLiberadas[i];
     if (inicio+1==vectorPaginasLiberadas[i].marcoPagina){

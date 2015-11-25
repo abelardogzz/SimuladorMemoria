@@ -6,7 +6,7 @@
 #include <cmath>
 #include <queue>
 #include <string>
-#include "Estructuras.h"
+
 class Disco
 {
 public:
@@ -52,7 +52,8 @@ void Disco::guardarEnAreaSwap(struct Pagina pagina)
 		//Se cambia el marco de pagina a la posicion actual en la pagina de memoria
 		tablaPaginas[posicion].pagina.marcoPagina = posicion;
 		//Prueba de funcionalidad de guardado en tabla.
-		cout<<"Memoria Disco - Se guardo la pagina " << tablaPaginas[posicion].pagina.numeroPagina<<" del proceso: "<<tablaPaginas[posicion].pagina.nombreProceso<<" en la posicion: "<<posicion<<" del marco de paginas."<<endl;
+		cout<<"Memoria Swap - Se guardo la pagina " << tablaPaginas[posicion].pagina.numeroPagina<<" del proceso "<<tablaPaginas[posicion].pagina.nombreProceso<<" en el marco de pagina "<<posicion
+	  <<" de memoria swap"<<endl;
 		//Se notifica que la posicion actual no se encuentra vacia
 		tablaPaginas[posicion].estaVacio = false;
 		paginasLibres--;
@@ -148,4 +149,3 @@ void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string 
 }
 
 #endif // DISCO_H_INCLUDED DISCO_H_INCLUDED
-

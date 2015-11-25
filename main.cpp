@@ -6,6 +6,7 @@
 using namespace std;
 #include "Estructuras.h"
 #include "Memoria.h"
+#include "Disco.h"
 
 
 
