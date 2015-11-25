@@ -51,12 +51,16 @@ void Disco::guardarEnAreaSwap(struct Pagina pagina)
 		tablaPaginas[posicion].pagina = pagina;
 		//Se cambia el marco de pagina a la posicion actual en la pagina de memoria
 		tablaPaginas[posicion].pagina.marcoPagina = posicion;
+		//Prueba de funcionalidad de guardado en tabla.
+		cout<<"Memoria Disco - El proceso se guardo en la posicion: "<<posicion<<" en la tabla de paginas."<<endl;
 		//Se notifica que la posicion actual no se encuentra vacia
 		tablaPaginas[posicion].estaVacio = false;
 		paginasLibres--;
 		//Se escribe en el primer y ultimo espacio de memoria indicando cuales estan ocupados.
 		areaSwap[posicion*8] = "Pagina: " + pagina.nombreProceso;
 		areaSwap[(posicion*8)+7] = "FIN de pagina: " + pagina.nombreProceso;
+		//Prueba de funcionalidad de guardado en memoria.
+		cout<<"Memoria Disco - El proceso se guardo en el rango de memoria: "<<(posicion*8)<<"-"<<((posicion*8)+7)<<endl;
 	}
 }
 
@@ -77,10 +81,14 @@ struct Pagina Disco::sacarDeAreaSwap(string nombrePro, int numeroPag)
 	{
 		//Se notifica que el espacio de la tabla esta vacio para que se pueda sobrescribir sobre el.
 		tablaPaginas[posicion].estaVacio = true;
+		//Prueba de funcionalidad De liberar tabla de paginas.
+		cout<<"Memoria Disco - Se libero la posicion: "<<posicion<<" de la tabla de paginas."<<endl;
 		paginasLibres++;
 		//Se borra el texto de las posiciones finales e iniciales en memoria
 		areaSwap[posicion*8] = "";
 		areaSwap[(posicion*8)+7] = "";
+		//Prueba de funcionalidad al liberar rango de memoria.
+		cout<<"Memoria Disco - Se libero el siguiente rango de memoria: "<<(posicion*8)<<"-"<<((posicion*8)+7)<<endl;
 	}
 
 }
@@ -99,12 +107,16 @@ void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string 
 			seEncontro = true;
 			//Se notifica que el espacio de la tabla esta vacio para que se pueda sobrescribir sobre el.
 			tablaPaginas[posicion].estaVacio = true;
+			//Prueba de funcionalidad De liberar tabla de paginas.
+			cout<<"Memoria Disco - Se libero la posicion: "<<posicion<<" de la tabla de paginas."<<endl;
 			paginasLibres++;
 			//Se borra el texto de las posiciones finales e iniciales en memoria
 			areaSwap[posicion*8] = "";
 			areaSwap[(posicion*8)+7] = "";
 			//Agregamos la pagina que liberamos al vector
 			vectorPaginas->push_back(tablaPaginas[posicion].pagina);
+			//Prueba de funcionalidad de paginas liberadas
+			cout<<"Memoria Disco - Se registro el proceso "<<tablaPaginas[posicion].pagina.nombreProceso<<" en la lista de paginas liberadas."<<endl;
 		}
 	}
 	//Si no se encontraron resultados, se notifica.
