@@ -76,6 +76,7 @@ struct Pagina * Disco::sacarDeAreaSwap(string nombrePro, int numeroPag)
 		(tablaPaginas[i].pagina.numeroPagina == numeroPag) &&
 		!tablaPaginas[i].estaVacio
 		){
+				seEncontro = true;
 				paginaSacada = &tablaPaginas[i].pagina;
 				tablaPaginas[i].estaVacio = true;
 				//Prueba de funcionalidad De liberar tabla de paginas.
@@ -87,6 +88,10 @@ struct Pagina * Disco::sacarDeAreaSwap(string nombrePro, int numeroPag)
 				areaSwap[(i*8)+7] = "";
 				return paginaSacada;
 		}
+	}
+
+	if (!seEncontro){
+		cout << "Esa página no la tiene ese proceso!" << endl;
 	}
 
 /*
