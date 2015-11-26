@@ -329,34 +329,38 @@ void Memoria::swapIn(string nombreProceso,int numPagina){
   struct Pagina *paginaSwappeadaIn;
 
   vector <struct Pagina> *vecPaginasSwappeadas = new vector <struct Pagina>;
+
   //Si no hay paginas libres, hay que swappearOut
   if (this->paginasLibres==0){
       cout << "ATENCIÓN: No hay páginas libres para hacer el swapIn. A continuación se hará un swapOut." << endl;
       this->swapOut(1,vecPaginasSwappeadas);
   }
-
   paginaSwappeadaIn = this->disco.sacarDeAreaSwap(nombreProceso,numPagina);
-  //Y la meto manualmente
-  for(int i=0; i<256; i++){
-    if (this->tablaPaginas[i].estaVacio)
-    {
-      //Le asigno a esa pagina los valores iniciales
-      this->tablaPaginas[i].pagina.nombreProceso = paginaSwappeadaIn->nombreProceso;
-      this->tablaPaginas[i].pagina.numeroPagina = paginaSwappeadaIn->numeroPagina;
-      this->tablaPaginas[i].pagina.marcoPagina = i;
-      //this->tablaPaginas[i].pagina. = i;
-      //Ya no está vacío ese marco
-      this->tablaPaginas[i].estaVacio = false;
-      this->paginasLibres--;
-      //Meto en la queue esta pagina, pues es la que sacaremos si es que se ocupa hacer un swap out
-      this->queuePaginas.push(tablaPaginas[i].pagina);
 
-      cout << "Memoria - " <<"Se guardó la página " << this->tablaPaginas[i].pagina.numeroPagina
-      <<" del proceso "<< this->tablaPaginas[i].pagina.nombreProceso << " en el marco de memoria " << i<<endl;
-      break;
-     }
+  //Y la meto manualmente
+  if (paginaSwappeadaIn != NULL){
+    for(int i=0; i<256; i++){
+      if (this->tablaPaginas[i].estaVacio)
+      {
+        //Le asigno a esa pagina los valores iniciales
+        this->tablaPaginas[i].pagina.nombreProceso = paginaSwappeadaIn->nombreProceso;
+        this->tablaPaginas[i].pagina.numeroPagina = paginaSwappeadaIn->numeroPagina;
+        this->tablaPaginas[i].pagina.marcoPagina = i;
+        //this->tablaPaginas[i].pagina. = i;
+        //Ya no está vacío ese marco
+        this->tablaPaginas[i].estaVacio = false;
+        this->paginasLibres--;
+        //Meto en la queue esta pagina, pues es la que sacaremos si es que se ocupa hacer un swap out
+        this->queuePaginas.push(tablaPaginas[i].pagina);
+
+        cout << "Memoria - " <<"Se guardó la página " << this->tablaPaginas[i].pagina.numeroPagina
+        <<" del proceso "<< this->tablaPaginas[i].pagina.nombreProceso << " en el marco de memoria " << i<<endl;
+        break;
+       }
+    }
+    this->totalSwapIns++;
   }
-  this->totalSwapIns++;
+
 }
 
 void Memoria::printMemory(){
