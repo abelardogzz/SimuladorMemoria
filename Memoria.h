@@ -331,6 +331,7 @@ void Memoria::swapIn(string nombreProceso,int numPagina){
   vector <struct Pagina> *vecPaginasSwappeadas = new vector <struct Pagina>;
   //Si no hay paginas libres, hay que swappearOut
   if (this->paginasLibres==0){
+      cout << "ATENCIÓN: No hay páginas libres para hacer el swapIn. A continuación se hará un swapOut." << endl;
       this->swapOut(1,vecPaginasSwappeadas);
   }
 
