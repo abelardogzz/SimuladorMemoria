@@ -86,7 +86,7 @@ private:
 
       @return Pagina
     */
-    void swapIn(string nombreProceso,int numPagina);
+    void swapIn(string nombreProceso,int numPagina, int dirVirtual);
 
     /**
       Se mueve de la memoria real al area swap la(s) pagina(s) que se requiere(n) sacar para meter el proceso
@@ -210,7 +210,7 @@ void Memoria::accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &
   if (!encontro){
     //Se intenta hacer el swap in
     //cout << "¡Esa dirección virtual no corresponde a este proceso!" << endl;
-    this->swapIn(nombreProceso,paginaDelProceso);
+    this->swapIn(nombreProceso,paginaDelProceso,dirVirtual);
   }
 
 }
@@ -324,10 +324,10 @@ void Memoria::meterPaginasDeProceso(int bytesProceso,string nombreProceso,vector
 
 }
 
-void Memoria::swapIn(string nombreProceso,int numPagina){
+void Memoria::swapIn(string nombreProceso,int numPagina, int dirVirtual){
   //Saco de Area swap la pagina que quiero, y la pongo
   struct Pagina *paginaSwappeadaIn;
-
+  int offsetDePagina = dirVirtual%8;
   vector <struct Pagina> *vecPaginasSwappeadas = new vector <struct Pagina>;
 
   //Si no hay paginas libres, hay que swappearOut
@@ -355,6 +355,9 @@ void Memoria::swapIn(string nombreProceso,int numPagina){
 
         cout << "Memoria - " <<"Se guardó la página " << this->tablaPaginas[i].pagina.numeroPagina
         <<" del proceso "<< this->tablaPaginas[i].pagina.nombreProceso << " en el marco de memoria " << i<<endl;
+
+        cout << "Direccion virtual del proceso "+ nombreProceso +" es: "+to_string(dirVirtual)+" y su direccion real es: "+
+        to_string(this->tablaPaginas[i].pagina.marcoPagina*8+offsetDePagina) << endl;
         break;
        }
     }

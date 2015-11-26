@@ -53,7 +53,7 @@ void Disco::guardarEnAreaSwap(struct Pagina pagina)
 		tablaPaginas[posicion].pagina.marcoPagina = posicion;
 		//Prueba de funcionalidad de guardado en tabla.
 		cout<<"Memoria Swap - Se guardo la pagina " << tablaPaginas[posicion].pagina.numeroPagina<<" del proceso "<<tablaPaginas[posicion].pagina.nombreProceso<<" en el marco de pagina "<<posicion
-	  <<" de memoria swap"<<endl;
+	  <<" en la dirección " << posicion*8 << " de S en memoria swap "<<endl;
 		//Se notifica que la posicion actual no se encuentra vacia
 		tablaPaginas[posicion].estaVacio = false;
 		paginasLibres--;
