@@ -39,11 +39,11 @@ int main()
         {//Operacion de iniciar un nuevo proceso
             ArchEntrada>>bytes;
             ArchEntrada >> nombreProceso;
-            if(bytes>2048)
+            if(bytes>2048 || bytes <= 0)
                 cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
             else
             {
-                cout<<op<<" proceso: "<<bytes<<" ID: "<<nombreProceso<<endl;
+                cout<<"Comando: "<<op<<" "<<bytes<<" "<<nombreProceso<<endl;
                 RAM.cargarProceso(bytes,nombreProceso,paginasSwappeadas);
                 //Agregacion al vector de procesos
                 Proceso pro;
@@ -57,7 +57,7 @@ int main()
             ArchEntrada>>dirVirtual; //direccion virtual a accesar
             ArchEntrada >> nombreProceso; //nombre del proceso que se quiere accesar
             ArchEntrada >> bitLecMod; //modo en que se quiere accesar
-            cout<<op<<" DirVirtual: "<<dirVirtual<<" ID: "<<nombreProceso<<" Lectura/Modificacion: "<< bitLecMod<<endl;
+            cout<<"Comando: "<<op<<" "<<dirVirtual<<" "<<nombreProceso<<" "<< bitLecMod<<endl;
             for(int i=0; i< procesosSesion.size(); i++)
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso){
@@ -79,7 +79,7 @@ int main()
         {//Operacion de liberacion de memoria, ocupada por un proceso
             acceso =false;
             ArchEntrada >> nombreProceso;
-            cout<<op<<" Libera proceso: "<<nombreProceso<<endl;
+            cout<<"Comando: "<<op<<" "<<nombreProceso<<endl;
             for(int i=0; i < procesosSesion.size();i++)
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso)
@@ -95,6 +95,7 @@ int main()
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
             cout<<op<<"\nRESUMEN DE INTRUCCIONES"<<endl;
+            cout<<"******************************"<<endl;
             int contProcesosTerminados=0,turnaroundProceso;
             //Finaliza una secuencia de isnturcciones
             for(int i=0; i < procesosSesion.size();i++)
@@ -118,6 +119,7 @@ int main()
             cout<<"Total Swapp-out's: "<< RAM.getTotalSwapOuts()<<endl;
             RAM.resetTotalSwapIns();
             RAM.resetTotalSwapOuts();
+            cout<<"******************************"<<endl;
 
         }
         else if(op == "E")
@@ -126,8 +128,8 @@ int main()
         }
         else
         {//Mensaje de error al recibir un comando no registrado como valido
-            cout<<"*Operacion invalida"<<endl;
-            cout<<"Posibles comandos: \nP(iniciar un proceso), \nA(acessar un proceso, \nL(liberar un proceso reigstrado)"<<endl;
+            cout<<"*Operacion invalida \" "<<op<<"\""<<endl;
+
         }
     }
 
