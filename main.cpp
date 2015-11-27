@@ -65,42 +65,32 @@ int main()
                         //acceso =true;
                         procesosSesion[i].numPageFaults ++;
                         //RAM.accesarProceso(dirVirtual,nombreProceso,pag1,pag2);
-                        //RAM.accesoProceso(int dirVirtual, string nombreProceso, paginasSwappeadas, paginasLiberadasEnSwap);
+
                         //Accesar, Lectura o modificacion, numero de paginas de swap
                     }
                     else
                     cout<<"La direccion de memoria no se puede accesar (PAGE OVERFLOW)"<<endl;
                 }
             }
-
-            /*if(acceso)
-            {
-                //for(int i=0;i<procesosSesion.size();i++)
-                int i=0;
-                while(procesosSesion[i].nombreProceso != null)
-                {
-                    if(procesosSesion[i].nombreProceso == nombreProceso)
-                        procesosSesion[i].numPageFaults ++;
-                    i++;
-                }
-            }*/
-            acceso =false;
-
+            if(!acceso)
+                cout<<"Ese proceso no ha sido declarado"<<endl;
         }
         else if(op == "L")
         {//Operacion de liberacion de memoria, ocupada por un proceso
+            acceso =false;
             ArchEntrada >> nombreProceso;
             cout<<op<<" Libera proceso: "<<nombreProceso<<endl;
-            //RAM.liberaProceso(string nombreProceso, vector paginasLiberadasEnSwap, vector paginasLiberadasEnMemoria);
             for(int i=0; i < procesosSesion.size();i++)
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso)
                     {
+                        //RAM.liberaProceso(string nombreProceso, vector paginasLiberadasEnSwap, vector paginasLiberadasEnMemoria);
                         procesosSesion[i].tiempoSalida = time(&tiempoaux);
+                        acceso =true;
                     }
             }
-
-
+            if(!acceso)
+                cout<<"Proceso: "<< nombreProceso <<", no se ha declarado para liberar"<<endl;
         }
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
@@ -123,8 +113,14 @@ int main()
                 }
             }
             cout<<"Turnaround Promedio: "<<(turnaroundTotal / contProcesosTerminados)<<endl;
+            /*
             //cout<<"Total Swapp-in's: "<< RAM.getSwapin()<<endl;
+            for(int i=0; i<paginasLiberadasEnSwap.size();i++)
+                paginasLiberadasEnSwap[i].nombreProceso;
             //cout<<"Total Swapp-out's: "<< RAM.getSwapout()<<endl;
+            for(int i=0; i<paginasLiberadasEnSwap.size();i++)
+                paginasLiberadasEnSwap[i].nombreProceso;
+            */
         }
         else if(op == "E")
         {//Terminacion del programa
