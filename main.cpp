@@ -86,7 +86,7 @@ int main()
     //Declaraciones de caracteriticas de los procesos
     string nombreProceso,op,operacion;
     int bytes,dirVirtual;
-    time_t tiempoaux;
+    time_t tiempoaux,tiempo;
     int bitLecMod;
     double turnaroundTotal;//8====================================================================D
     bool acceso=false, accesarProceso=false;
@@ -98,16 +98,26 @@ int main()
     {//La primer letra determina cual es la operacion a realizar
         sscomando <<operacion;
         if(ValidaOp(operacion))
+        {
+            //cout<<"operacion AKA READLINE:  "<<operacion<<endl;
+            //cout<<"LA VERDAD: Valida Operacion:   "<<ValidaOp(operacion)<<endl;
             sscomando >> op;
-        else
+            //cout<<op<<endl;
+
+        }
+        else{
             op="ERROR";
+            sscomando.str(" ");
+        }
 
         if(op == "P")
         {//Operacion de iniciar un nuevo proceso
             sscomando>>bytes;//ArchEntrada>>bytes;
-            if(isdigit(bytes))
+            //cout<<"VALOR DE BYTES "<<bytes<<endl;
+            //cout<<"VALOR DE BYTES(VALIDADO) "<<isdigit(bytes)<<endl;
+            if(bytes>0)//if(isdigit(bytes))
             {
-                ArchEntrada >> nombreProceso;
+                sscomando>> nombreProceso;//ArchEntrada >> nombreProceso;
                 if(bytes>2048 || bytes <= 0)
                     cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
                 else
@@ -117,23 +127,29 @@ int main()
                     //Agregacion al vector de procesos
                     Proceso pro;
                     pro.nombreProceso = nombreProceso;
-                    pro.tiempollegada = time(&tiempoaux);
+                    localtime(&(pro.tiempollegada));
+                    localtime(&tiempo);
+                    //cout<<"TIEMPOOOO "<<ctime(&tiempo);
+                    //cout<<"TIEMPO AUX "<<ctime(&(pro.tiempollegada))<<endl;
+                    //pro.tiempollegada = localtime(&tiempoaux);
                     procesosSesion.push_back(pro);
                 }
             }
             else
             {
                 cout<<"COMANDO NO VALIDO: "<<operacion<<endl;
+                sscomando.str(" ");
             }
 
         }
         else if(op == "A")
         {//Operacion de acceso a un nuevo proceso
-            ArchEntrada>>dirVirtual; //direccion virtual a accesar
-            if(isdigit(dirVirtual))
+            sscomando >> dirVirtual;//ArchEntrada>>dirVirtual; //direccion virtual a accesar
+            //cout<<"DIRECCION VIRTUAL:   "<<dirVirtual<<endl;
+            if(dirVirtual>0)//if(isdigit(dirVirtual))
             {
-                ArchEntrada >> nombreProceso; //nombre del proceso que se quiere accesar
-                ArchEntrada >> bitLecMod; //modo en que se quiere accesar
+                sscomando >> nombreProceso;//ArchEntrada >> nombreProceso; //nombre del proceso que se quiere accesar
+                sscomando >> bitLecMod;//ArchEntrada >> bitLecMod; //modo en que se quiere accesar
                 cout<<"COMANDO: "<<op<<" "<<dirVirtual<<" "<<nombreProceso<<" "<< bitLecMod<<endl;
                 int pos;
                 for(int i=0; i< procesosSesion.size(); i++)
@@ -162,19 +178,29 @@ int main()
                         procesosSesion[pos].numPageFaults +=1;
                 }
             }
+            else
+            {
+                cout<<"COMANDO NO VALIDO: "<<operacion<<endl;
+                sscomando.str(" ");
+            }
         }
         else if(op == "L")
         {//Operacion de liberacion de memoria, ocupada por un proceso
             acceso =false;
-            ArchEntrada >> nombreProceso;
+            sscomando >> nombreProceso;//ArchEntrada >> nombreProceso;
             cout<<"COMANDO: "<<op<<" "<<nombreProceso<<endl;
             for(int i=0; i < procesosSesion.size();i++)
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso)
                     {
                         RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
-                        procesosSesion[i].tiempoSalida = time(&tiempoaux);
+                        localtime(&tiempoaux);
+                        procesosSesion[i].tiempoSalida = tiempoaux;
+                        //cout<<"TIEMPO AUX "<<ctime(&tiempoaux)<<endl;
+                        localtime(&tiempo);
+                        //cout<<"TIEMPOOOO "<<ctime(&tiempo);
                         acceso =true;
+                        break;
                     }
             }
             if(!acceso){
@@ -183,18 +209,22 @@ int main()
         }
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
-            cout<<op<<"\nRESUMEN DE INTRUCCIONES"<<endl;
+            cout<<op<<" RESUMEN DE INTRUCCIONES"<<endl;
             cout<<"******************************"<<endl;
             double contProcesosTerminados=0;
             double turnaroundProceso;
             //Finaliza una secuencia de isnturcciones
             for(int i=0; i < procesosSesion.size();i++)
-            {
+            {cout<<"PROCESO "<<i<<endl;
+            cout<<procesosSesion[i].tiempoSalida<<endl;
                 if(procesosSesion[i].tiempoSalida != NULL)
                 {
                     contProcesosTerminados++;
-                    cout<<procesosSesion[i].tiempoSalida<<" TIEMPOS "<<procesosSesion[i].tiempollegada<<endl;
+
+                    //cout<<ctime(&(procesosSesion[i].tiempoSalida))<<" TIEMPOS "<<ctime(&(procesosSesion[i].tiempollegada))<<endl;
+
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
+                    //cout<<"TIME DIFF "<< turnaroundProceso<<endl;
 
                     cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
                     cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
@@ -214,7 +244,7 @@ int main()
         }
         else if(op == "E")
         {//Terminacion del programa
-            cout<<op<<"\nFIN DE PROGRAMA"<<endl;
+            cout<<op<<" FIN DE PROGRAMA"<<endl;
         }
         else if(op == "ERROR")
         {//Mensaje de error al recibir un COMANDO no registrado como valido
