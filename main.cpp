@@ -115,11 +115,7 @@ int main()
             cout<<"Turnaround Promedio: "<<(turnaroundTotal / contProcesosTerminados)<<endl;
             /*
             //cout<<"Total Swapp-in's: "<< RAM.getSwapin()<<endl;
-            for(int i=0; i<paginasLiberadasEnSwap.size();i++)
-                paginasLiberadasEnSwap[i].nombreProceso;
             //cout<<"Total Swapp-out's: "<< RAM.getSwapout()<<endl;
-            for(int i=0; i<paginasLiberadasEnSwap.size();i++)
-                paginasLiberadasEnSwap[i].nombreProceso;
             */
         }
         else if(op == "E")
