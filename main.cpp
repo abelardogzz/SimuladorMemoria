@@ -20,7 +20,7 @@ int main()
     struct Pagina Pag1,Pag2;
 
     //Variables que definen el comportamiento de la memoria, RAM
-    //Memoria RAM = new Memoria();
+    Memoria RAM ;
 
     ifstream ArchEntrada;//Archivo de Entrada, define las instrucciones
     ArchEntrada.open("Instrucciones.txt");
@@ -44,7 +44,7 @@ int main()
             else
             {
                 cout<<op<<" proceso: "<<bytes<<" ID: "<<nombreProceso<<endl;
-                //RAM.cargaProceso(int bytes,string processID, vector paginasSwappeadas);
+                //RAM.cargaProceso(bytes,processID,paginasSwappeadas);
                 //Agregacion al vector de procesos
                 Proceso pro;
                 pro.nombreProceso = nombreProceso;
@@ -62,9 +62,9 @@ int main()
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso){
                     if(procesosSesion[i].tamano <= dirVirtual){
-                        //acceso =true;
+                        acceso =true;
                         procesosSesion[i].numPageFaults ++;
-                        //RAM.accesarProceso(dirVirtual,nombreProceso,pag1,pag2);
+                        RAM.accesarProceso(dirVirtual,nombreProceso,Pag1,Pag2);
 
                         //Accesar, Lectura o modificacion, numero de paginas de swap
                     }
@@ -84,7 +84,7 @@ int main()
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso)
                     {
-                        //RAM.liberaProceso(string nombreProceso, vector paginasLiberadasEnSwap, vector paginasLiberadasEnMemoria);
+                        RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
                         procesosSesion[i].tiempoSalida = time(&tiempoaux);
                         acceso =true;
                     }
@@ -113,10 +113,12 @@ int main()
                 }
             }
             cout<<"Turnaround Promedio: "<<(turnaroundTotal / contProcesosTerminados)<<endl;
-            /*
-            //cout<<"Total Swapp-in's: "<< RAM.getSwapin()<<endl;
-            //cout<<"Total Swapp-out's: "<< RAM.getSwapout()<<endl;
-            */
+
+            cout<<"Total Swapp-in's: "<< RAM.getTotalSwapIns()<<endl;
+            cout<<"Total Swapp-out's: "<< RAM.getTotalSwapOuts()<<endl;
+            RAM.resetTotalSwapIns();
+            RAM.resetTotalSwapOuts();
+
         }
         else if(op == "E")
         {//Terminacion del programa
