@@ -47,7 +47,7 @@ public:
 
     @return void
   */
-  void accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &paginaSacada,struct Pagina &paginaNuevaMemoria);
+  bool accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &paginaSacada,struct Pagina &paginaNuevaMemoria);
   /**
     Se liberan todas las paginas del proceso en cuestion
 
@@ -179,6 +179,7 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   int final=-1;
   cout << "Memoria - Se asignaron los siguientes marcos de memoria al proceso " + nombreProceso << endl;
 
+  //Este for imprime que marcos de pagina se asignaron
   for(std::vector<int>::size_type i = 0; i != marcosDePaginaAsignados.size(); i++) {
     struct Pagina marco = marcosDePaginaAsignados[i];
     if (inicio+1==marcosDePaginaAsignados[i].marcoPagina){
@@ -209,7 +210,7 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
 
 }
 
-void Memoria::accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &paginaSacada,struct Pagina &paginaNuevaMemoria)
+bool Memoria::accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &paginaSacada,struct Pagina &paginaNuevaMemoria)
 {
   int paginaDelProceso = dirVirtual/8;
   int offsetDePagina = dirVirtual%8;
@@ -225,15 +226,16 @@ void Memoria::accesarProceso(int dirVirtual,string nombreProceso,struct Pagina &
           encontro = true;
           cout << "Direccion virtual del proceso "+ nombreProceso +" es: "+to_string(dirVirtual)+" y su direccion real es: "+
           to_string(this->tablaPaginas[i].pagina.marcoPagina*8+offsetDePagina) << endl;
-
-          break;
+          return false;
       }
+
   }
 
   if (!encontro){
     //Se intenta hacer el swap in
     //cout << "¡Esa dirección virtual no corresponde a este proceso!" << endl;
     this->swapIn(nombreProceso,paginaDelProceso,dirVirtual);
+    return true;
   }
 
 }
@@ -254,6 +256,7 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
   int inicio=vectorPaginasLiberadas[0].marcoPagina;
   int final=-1;
   cout << "Memoria - Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
+  //Este for imprime que marcos de pagina se asignaron
   for(std::vector<int>::size_type i = 0; i != vectorPaginasLiberadas.size(); i++) {
     struct Pagina marco = vectorPaginasLiberadas[i];
     if (inicio+1==vectorPaginasLiberadas[i].marcoPagina){
