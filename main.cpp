@@ -44,7 +44,7 @@ int main()
             else
             {
                 cout<<op<<" proceso: "<<bytes<<" ID: "<<nombreProceso<<endl;
-                //RAM.cargaProceso(bytes,processID,paginasSwappeadas);
+                RAM.cargarProceso(bytes,nombreProceso,paginasSwappeadas);
                 //Agregacion al vector de procesos
                 Proceso pro;
                 pro.nombreProceso = nombreProceso;
