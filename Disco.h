@@ -12,19 +12,47 @@ class Disco
 public:
 	//Constructor
 	Disco();
+
 	//Metodos publicos de la clase
+	/**
+    Se carga un proceso en espacio de memoria
+
+    @pagina la esctructura de pagina que se desea cargar de memoria real a Disco.
+
+    @return void
+    */
 	void guardarEnAreaSwap(struct Pagina pagina);
+
+	/**
+    Se saca un proceso de Disco con el numero de pagia que se le manda.
+
+    @nombrePro el nombre de proceso que se busca para sacar de Disco
+
+    @numeroPag el numero de la pagina que se desea sacar
+
+    @return pagina Sacada regresa la pagina que se saco de Disco.
+    */
 	struct Pagina * sacarDeAreaSwap(string nombrePro, int numeroPag);
+
+	/**
+    Se libera un proceso de Disco y se registra en un vector de referencia.
+
+    @paginasLiberadasSwap direccion para hacer referencia al vector de las paginas liberadas, en este se guardan 
+    las paginas que fueron liberadas.
+
+    @nombrePro nombre de los procesos que se busca liberar.
+
+    @return void
+    */
 	void liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string nombrePro);
 
 
 
 private:
 	//Metodos privados de la clase
-	//Se hacen matrices de Memoria de Disco y Paginas.
-    struct Espacio tablaPaginas[512];
-    string areaSwap[4096];
-    int paginasLibres;
+    struct Espacio tablaPaginas[512]; //Esta es la tabla que simula la tabla de paginas de Disco
+    string areaSwap[4096]; //Esta tabla simula la memoria de Disco.
+    int paginasLibres; //Contador de el numero de paginas disponibles.
 };
 
 Disco::Disco ()
