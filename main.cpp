@@ -90,7 +90,7 @@ int main()
                     }
             }
             if(!acceso)
-                cout<<"Proceso: "<< nombreProceso <<", no se ha declarado para liberar"<<endl;
+                cout<<"Proceso: "<< nombreProceso <<", no se ha declarado"<<endl;
         }
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
