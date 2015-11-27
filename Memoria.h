@@ -62,7 +62,30 @@ public:
     @return void
   */
   void liberarProceso(string nombreProceso,vector <struct Pagina> &paginasLiberadasDisco, vector <struct Pagina> &paginasLiberadasMemoria);
-  void printMemory();
+  /**
+    Se obtiene el número total de Swap Ins de la sesion
+
+    @return int
+  */
+  int getTotalSwapIns();
+  /**
+    Se obtiene el número total de Swap Outs de la sesion
+
+    @return int
+  */
+  int getTotalSwapOuts();
+  /**
+    Se resettea el número total de Swap Ins de la sesion
+
+    @return void
+  */
+  void resetTotalSwapIns();
+  /**
+    Se resettea el número total de Swap Outs de la sesion
+
+    @return void
+  */
+  void resetTotalSwapOuts();
 
 
 private:
@@ -365,18 +388,21 @@ void Memoria::swapIn(string nombreProceso,int numPagina, int dirVirtual){
   }
 
 }
-
-void Memoria::printMemory(){
-
-  // for (int i=0;i<256;i++){
-  //   this->tablaPaginas[posicion].pagina.marcoPagina
-  // }
-  for (int i=0;i<256;i++){
-    cout << this->tablaPaginas[i].pagina.marcoPagina << endl;
-  }
-  for (int i=0;i<2048;i++){
-    cout << this->memoria[i] << endl;
-  }
+int Memoria::getTotalSwapIns(){
+  return this->totalSwapIns;
 }
+
+int Memoria::getTotalSwapOuts(){
+  return this->totalSwapOuts;
+}
+
+void Memoria::resetTotalSwapIns(){
+  this->totalSwapIns = 0;
+}
+
+void Memoria::resetTotalSwapIns(){
+  this->totalSwapOuts = 0;
+}
+
 
 #endif // MEMORIA_H_INCLUDED
