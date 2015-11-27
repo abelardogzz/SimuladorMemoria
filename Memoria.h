@@ -400,7 +400,7 @@ void Memoria::resetTotalSwapIns(){
   this->totalSwapIns = 0;
 }
 
-void Memoria::resetTotalSwapIns(){
+void Memoria::resetTotalSwapOuts(){
   this->totalSwapOuts = 0;
 }
 
