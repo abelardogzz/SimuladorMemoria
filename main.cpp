@@ -10,6 +10,65 @@ using namespace std;
 #include "Disco.h"
 
 
+bool ValidaOp(string comando)
+{
+    string operacion;;
+    string auxLectura,aux;
+    int numIteraciones = 0;
+    string comandoEsperado;
+    int blankSpaces = 0;
+    bool malComando =false;
+    stringstream sscomando;
+    sscomando <<comando;
+
+    while(sscomando >> operacion && !malComando){
+            //cout<<"******OPERACION: "<<operacion<<endl;
+            if(operacion == " ")
+                blankSpaces++;
+            else if (operacion == "P" && numIteraciones == 0)
+                comandoEsperado = "P";
+            else if (operacion == "A" && numIteraciones == 0)
+                comandoEsperado = "A";
+            else if (operacion == "L" && numIteraciones == 0)
+                comandoEsperado = "L";
+            else if (operacion == "F" && numIteraciones == 0)
+                comandoEsperado = "F";
+            else if (operacion == "E" && numIteraciones == 0)
+                comandoEsperado = "E";
+            /*else
+                malComando = true;*/
+        numIteraciones++;
+        blankSpaces++;
+
+    }
+
+        if(comandoEsperado == "P" && blankSpaces== 3)
+            return true;
+        else if(comandoEsperado == "A" && blankSpaces == 4)
+            return true;
+        else if(comandoEsperado == "L" && blankSpaces == 2)
+            return true;
+        else if(comandoEsperado == "F" && blankSpaces == 1)
+            return true;
+        else if(comandoEsperado == "E" && blankSpaces == 1)
+            return true;
+        else if(comandoEsperado == "P" && blankSpaces != 3)
+            {cout<<"ERROR EL COMANDO P TIENE DOS PARAMETROS"<<endl; return false; }
+        else if(comandoEsperado == "A" && blankSpaces != 4)
+            {cout<<"ERROR EL COMANDO A TIENE TRES PARAMETROS"<<endl; return false; }
+        else if(comandoEsperado == "L" && blankSpaces != 2)
+            {cout<<"ERROR EL COMANDO L TIENE UN PARAMETROS"<<endl; return false; }
+        else if(comandoEsperado == "F" && blankSpaces != 1)
+            {cout<<"ERROR EL COMANDO F TIENE DOS PARAMETROS"<<endl; return false; }
+        else if(comandoEsperado == "E" && blankSpaces != 1)
+            {cout<<"ERROR EL COMANDO P TIENE DOS PARAMETROS"<<endl; return false; }
+        else
+            {cout<<"ERROR con el comando: "<<comando<<endl; return false; }
+
+
+}
+
+
 
 int main()
 {
@@ -25,61 +84,90 @@ int main()
     ifstream ArchEntrada;//Archivo de Entrada, define las instrucciones
     ArchEntrada.open("Instrucciones.txt");
     //Declaraciones de caracteriticas de los procesos
-    string nombreProceso,op;
+    string nombreProceso,op,operacion;
     int bytes,dirVirtual;
     time_t tiempoaux;
     int bitLecMod;
     double turnaroundTotal;//8====================================================================D
-    bool acceso=false;
+    bool acceso=false, accesarProceso=false;
+    stringstream sscomando;
 
-    while (ArchEntrada>>op)//Lectura de archivo, la primer letra,
+    //while(getline(ArchEntrada,operacion))
+    //while (ArchEntrada>>op)//Lectura de archivo, la primer letra,
+    while(getline(ArchEntrada,operacion))
     {//La primer letra determina cual es la operacion a realizar
+        sscomando <<operacion;
+        if(ValidaOp(operacion))
+            sscomando >> op;
+        else
+            op="ERROR";
 
         if(op == "P")
         {//Operacion de iniciar un nuevo proceso
-            ArchEntrada>>bytes;
-            ArchEntrada >> nombreProceso;
-            if(bytes>2048 || bytes <= 0)
-                cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
+            sscomando>>bytes;//ArchEntrada>>bytes;
+            if(isdigit(bytes))
+            {
+                ArchEntrada >> nombreProceso;
+                if(bytes>2048 || bytes <= 0)
+                    cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
+                else
+                {
+                    cout<<"COMANDO: "<<op<<" "<<bytes<<" "<<nombreProceso<<endl;
+                    RAM.cargarProceso(bytes,nombreProceso,paginasSwappeadas);
+                    //Agregacion al vector de procesos
+                    Proceso pro;
+                    pro.nombreProceso = nombreProceso;
+                    pro.tiempollegada = time(&tiempoaux);
+                    procesosSesion.push_back(pro);
+                }
+            }
             else
             {
-                cout<<"Comando: "<<op<<" "<<bytes<<" "<<nombreProceso<<endl;
-                RAM.cargarProceso(bytes,nombreProceso,paginasSwappeadas);
-                //Agregacion al vector de procesos
-                Proceso pro;
-                pro.nombreProceso = nombreProceso;
-                pro.tiempollegada = time(&tiempoaux);
-                procesosSesion.push_back(pro);
+                cout<<"COMANDO NO VALIDO: "<<operacion<<endl;
             }
+
         }
         else if(op == "A")
         {//Operacion de acceso a un nuevo proceso
             ArchEntrada>>dirVirtual; //direccion virtual a accesar
-            ArchEntrada >> nombreProceso; //nombre del proceso que se quiere accesar
-            ArchEntrada >> bitLecMod; //modo en que se quiere accesar
-            cout<<"Comando: "<<op<<" "<<dirVirtual<<" "<<nombreProceso<<" "<< bitLecMod<<endl;
-            for(int i=0; i< procesosSesion.size(); i++)
+            if(isdigit(dirVirtual))
             {
-                if(procesosSesion[i].nombreProceso == nombreProceso){
-                    if(procesosSesion[i].tamano <= dirVirtual){
-                        acceso =true;
-                        procesosSesion[i].numPageFaults ++;
-                        RAM.accesarProceso(dirVirtual,nombreProceso,Pag1,Pag2);
-
-                        //Accesar, Lectura o modificacion, numero de paginas de swap
+                ArchEntrada >> nombreProceso; //nombre del proceso que se quiere accesar
+                ArchEntrada >> bitLecMod; //modo en que se quiere accesar
+                cout<<"COMANDO: "<<op<<" "<<dirVirtual<<" "<<nombreProceso<<" "<< bitLecMod<<endl;
+                int pos;
+                for(int i=0; i< procesosSesion.size(); i++)
+                {
+                    if(procesosSesion[i].nombreProceso == nombreProceso){
+                        //Si el proceso coincide con el solicitado
+                        if(procesosSesion[i].tamano <= dirVirtual){
+                            //Si esl tamaño del proceso es mayor a la direccion virtual
+                            acceso =true;//Si se acceso =TRUE
+                            accesarProceso = RAM.accesarProceso(dirVirtual,nombreProceso,Pag1,Pag2);
+                            //Accesar, Lectura o modificacion, numero de paginas de swap
+                            pos = i;//Guarda posicion, para asignar despues PageFaults, si hubó
+                            break;
+                        }
+                        else//
+                        cout<<"La direccion de memoria no se puede accesar (PAGE OVERFLOW)"<<endl;
                     }
-                    else
-                    cout<<"La direccion de memoria no se puede accesar (PAGE OVERFLOW)"<<endl;
+                }
+                if(!acceso){
+                    //Si no se logro el acceso
+                    cout<<"Ese proceso no ha sido declarado"<<endl;
+                }
+                else
+                {//Si se acceso y ocurrio un pageFault
+                    if(accesarProceso)
+                        procesosSesion[pos].numPageFaults +=1;
                 }
             }
-            if(!acceso)
-                cout<<"Ese proceso no ha sido declarado"<<endl;
         }
         else if(op == "L")
         {//Operacion de liberacion de memoria, ocupada por un proceso
             acceso =false;
             ArchEntrada >> nombreProceso;
-            cout<<"Comando: "<<op<<" "<<nombreProceso<<endl;
+            cout<<"COMANDO: "<<op<<" "<<nombreProceso<<endl;
             for(int i=0; i < procesosSesion.size();i++)
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso)
@@ -89,14 +177,16 @@ int main()
                         acceso =true;
                     }
             }
-            if(!acceso)
+            if(!acceso){
                 cout<<"Proceso: "<< nombreProceso <<", no se ha declarado"<<endl;
+            }
         }
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
             cout<<op<<"\nRESUMEN DE INTRUCCIONES"<<endl;
             cout<<"******************************"<<endl;
-            int contProcesosTerminados=0,turnaroundProceso;
+            double contProcesosTerminados=0;
+            double turnaroundProceso;
             //Finaliza una secuencia de isnturcciones
             for(int i=0; i < procesosSesion.size();i++)
             {
@@ -126,10 +216,9 @@ int main()
         {//Terminacion del programa
             cout<<op<<"\nFIN DE PROGRAMA"<<endl;
         }
-        else
-        {//Mensaje de error al recibir un comando no registrado como valido
-            cout<<"*Operacion invalida \" "<<op<<"\""<<endl;
-
+        else if(op == "ERROR")
+        {//Mensaje de error al recibir un COMANDO no registrado como valido
+            cout<<"*Operacion invalida \" "<<operacion<<"\""<<endl;
         }
     }
 
