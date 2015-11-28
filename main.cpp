@@ -4,6 +4,7 @@
 #include <string>
 #include <time.h>
 #include <vector>
+#include <stdio.h>
 using namespace std;
 #include "Estructuras.h"
 #include "Memoria.h"
@@ -12,7 +13,7 @@ using namespace std;
 
 bool ValidaOp(string comando)
 {
-    string operacion;;
+    string operacion;
     string auxLectura,aux;
     int numIteraciones = 0;
     string comandoEsperado;
@@ -63,7 +64,7 @@ bool ValidaOp(string comando)
         else if(comandoEsperado == "E" && blankSpaces != 1)
             {cout<<"ERROR EL COMANDO P TIENE DOS PARAMETROS"<<endl; return false; }
         else
-            {cout<<"ERROR con el comando: "<<comando<<endl; return false; }
+            {/*cout<<"ERROR con el comando: "<<comando<<endl;*/ return false; }
 
 
 }
@@ -88,9 +89,10 @@ int main()
     int bytes,dirVirtual;
     time_t tiempoaux,tiempo;
     int bitLecMod;
-    double turnaroundTotal;//8====================================================================D
+    long double turnaroundTotal;//8====================================================================D
     bool acceso=false, accesarProceso=false;
     stringstream sscomando;
+
 
     //while(getline(ArchEntrada,operacion))
     //while (ArchEntrada>>op)//Lectura de archivo, la primer letra,
@@ -99,15 +101,18 @@ int main()
         sscomando <<operacion;
         if(ValidaOp(operacion))
         {
-            //cout<<"operacion AKA READLINE:  "<<operacion<<endl;
+            //cout<<"   READLINE:  "<<operacion<<endl;
             //cout<<"LA VERDAD: Valida Operacion:   "<<ValidaOp(operacion)<<endl;
+            //cout<<op<<endl;
             sscomando >> op;
             //cout<<op<<endl;
 
         }
         else{
+            //cout<<"   READLINE(ELSE):  "<<operacion<<endl;
             op="ERROR";
-            sscomando.str(" ");
+            sscomando.str("");
+            sscomando.clear();
         }
 
         if(op == "P")
@@ -127,18 +132,25 @@ int main()
                     //Agregacion al vector de procesos
                     Proceso pro;
                     pro.nombreProceso = nombreProceso;
-                    localtime(&(pro.tiempollegada));
-                    localtime(&tiempo);
-                    //cout<<"TIEMPOOOO "<<ctime(&tiempo);
-                    //cout<<"TIEMPO AUX "<<ctime(&(pro.tiempollegada))<<endl;
-                    //pro.tiempollegada = localtime(&tiempoaux);
+
+                    /*
+                    time(&tiempo);
+                    struct tm *auxy = localtime(&tiempo);
+                    tiempo = mktime((auxy));
+                    //pro.tiempollegada = localtime(&tiempoaux);*/
+
+                    pro.tiempollegada = clock();
+
+                    //cout<<"TIEMPO LLEGADA "<< ctime(&tiempo);
+                    //cout<<"TIEMPO LLEGADA "<< clock();
+
                     procesosSesion.push_back(pro);
                 }
             }
             else
             {
                 cout<<"COMANDO NO VALIDO: "<<operacion<<endl;
-                sscomando.str(" ");
+                sscomando.str("");
             }
 
         }
@@ -181,7 +193,7 @@ int main()
             else
             {
                 cout<<"COMANDO NO VALIDO: "<<operacion<<endl;
-                sscomando.str(" ");
+                sscomando.str("");
             }
         }
         else if(op == "L")
@@ -191,14 +203,11 @@ int main()
             cout<<"COMANDO: "<<op<<" "<<nombreProceso<<endl;
             for(int i=0; i < procesosSesion.size();i++)
             {
-                if(procesosSesion[i].nombreProceso == nombreProceso)
+                if(procesosSesion[i].nombreProceso == nombreProceso && procesosSesion[i].tiempoSalida == NULL)
                     {
+
                         RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
-                        localtime(&tiempoaux);
-                        procesosSesion[i].tiempoSalida = tiempoaux;
-                        //cout<<"TIEMPO AUX "<<ctime(&tiempoaux)<<endl;
-                        localtime(&tiempo);
-                        //cout<<"TIEMPOOOO "<<ctime(&tiempo);
+                        procesosSesion[i].tiempoSalida = clock();
                         acceso =true;
                         break;
                     }
@@ -212,29 +221,36 @@ int main()
             cout<<op<<" RESUMEN DE INTRUCCIONES"<<endl;
             cout<<"******************************"<<endl;
             double contProcesosTerminados=0;
-            double turnaroundProceso;
+            long double turnaroundProceso;
             //Finaliza una secuencia de isnturcciones
             for(int i=0; i < procesosSesion.size();i++)
-            {cout<<"PROCESO "<<i<<endl;
-            cout<<procesosSesion[i].tiempoSalida<<endl;
+            { //cout<<"PROCESO "<<i<<endl;
+                /*cout<<procesosSesion[i].tiempoSalida<<endl;
+                cout<<procesosSesion[i].tiempollegada<<endl;*/
                 if(procesosSesion[i].tiempoSalida != NULL)
                 {
                     contProcesosTerminados++;
-
-                    //cout<<ctime(&(procesosSesion[i].tiempoSalida))<<" TIEMPOS "<<ctime(&(procesosSesion[i].tiempollegada))<<endl;
-
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
-                    //cout<<"TIME DIFF "<< turnaroundProceso<<endl;
-
                     cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
                     cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
                     cout<<" PageFaults: "<<procesosSesion[i].numPageFaults<<endl;
                     turnaroundTotal += turnaroundProceso;
-
+                }
+                else
+                {
+                    procesosSesion[i].tiempoSalida = clock();
+                    nombreProceso = procesosSesion[i].nombreProceso;
+                    RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
+                    contProcesosTerminados++;
+                    turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
+                    cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
+                    cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
+                    cout<<" PageFaults: "<<procesosSesion[i].numPageFaults<<endl;
+                    turnaroundTotal += turnaroundProceso;
                 }
             }
+            procesosSesion.clear();
             cout<<"Turnaround Promedio: "<<(turnaroundTotal / contProcesosTerminados)<<endl;
-
             cout<<"Total Swapp-in's: "<< RAM.getTotalSwapIns()<<endl;
             cout<<"Total Swapp-out's: "<< RAM.getTotalSwapOuts()<<endl;
             RAM.resetTotalSwapIns();
@@ -248,7 +264,8 @@ int main()
         }
         else if(op == "ERROR")
         {//Mensaje de error al recibir un COMANDO no registrado como valido
-            cout<<"*Operacion invalida \" "<<operacion<<"\""<<endl;
+            cout<<"Operacion invalida: "<<operacion<<" "<<endl;
+            sscomando.str("");
         }
     }
 
