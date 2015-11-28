@@ -161,8 +161,6 @@ void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string 
 	{
 		if (tablaPaginas[posicion].pagina.nombreProceso == nombrePro)
 		{
-			//Se notifica que se encontro minimo 1 pagina con el nombre de proceso
-			seEncontro = true;
 			//Se notifica que el espacio de la tabla esta vacio para que se pueda sobrescribir sobre el.
 			tablaPaginas[posicion].estaVacio = true;
 			//Prueba de funcionalidad De liberar tabla de paginas.
