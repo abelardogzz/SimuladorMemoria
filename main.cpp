@@ -273,6 +273,8 @@ int main()
         else if(op == "E")
         {//Terminacion del programa
             cout<<endl<<op<<" FIN DE PROGRAMA"<<endl;
+            ArchEntrada.close();
+            return 0;
         }
         else if(op == "ERROR")
         {//Mensaje de error al recibir un COMANDO no registrado como valido
