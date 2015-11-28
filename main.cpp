@@ -101,15 +101,9 @@ int main()
         sscomando <<operacion;
         if(ValidaOp(operacion))
         {
-            //cout<<"   READLINE:  "<<operacion<<endl;
-            //cout<<"LA VERDAD: Valida Operacion:   "<<ValidaOp(operacion)<<endl;
-            //cout<<op<<endl;
             sscomando >> op;
-            //cout<<op<<endl;
-
         }
         else{
-            //cout<<"   READLINE(ELSE):  "<<operacion<<endl;
             op="ERROR";
             sscomando.str("");
             sscomando.clear();
@@ -118,8 +112,6 @@ int main()
         if(op == "P")
         {//Operacion de iniciar un nuevo proceso
             sscomando>>bytes;//ArchEntrada>>bytes;
-            //cout<<"VALOR DE BYTES "<<bytes<<endl;
-            //cout<<"VALOR DE BYTES(VALIDADO) "<<isdigit(bytes)<<endl;
             if(bytes>0)//if(isdigit(bytes))
             {
                 repetido = false;
@@ -130,43 +122,45 @@ int main()
                         repetido = true;
                 }
                 if(bytes>2048 || bytes <= 0)
-                    cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
+                    cout<<endl<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
                 else if(!repetido)
                 {
-                    cout<<"COMANDO: "<<op<<" "<<bytes<<" "<<nombreProceso<<endl;
+                    cout<<endl<<"COMANDO: "<<op<<" "<<bytes<<" "<<nombreProceso<<endl;
                     RAM.cargarProceso(bytes,nombreProceso,paginasSwappeadas);
                     //Agregacion al vector de procesos
                     Proceso pro;
                     pro.nombreProceso = nombreProceso;
                     pro.tiempollegada = clock();
-
                     procesosSesion.push_back(pro);
                 }
                 else
-                    cout<<"COMANDO NO VALIDO (REPETIDO):"<< operacion<<endl;
+                    cout<<endl<<"COMANDO NO VALIDO (REPETIDO):"<< operacion<<endl;
+                    sscomando.str("");
+                    sscomando.clear();
             }
             else
             {
-                cout<<"COMANDO NO VALIDO: "<<operacion<<endl;
+                cout<<endl<<"COMANDO NO VALIDO: "<<operacion<<endl;
                 sscomando.str("");
+                sscomando.clear();
             }
 
         }
         else if(op == "A")
         {//Operacion de acceso a un nuevo proceso
+            acceso =false;
             sscomando >> dirVirtual;//ArchEntrada>>dirVirtual; //direccion virtual a accesar
-            //cout<<"DIRECCION VIRTUAL:   "<<dirVirtual<<endl;
             if(dirVirtual>0)//if(isdigit(dirVirtual))
             {
                 sscomando >> nombreProceso;//ArchEntrada >> nombreProceso; //nombre del proceso que se quiere accesar
                 sscomando >> bitLecMod;//ArchEntrada >> bitLecMod; //modo en que se quiere accesar
-                cout<<"COMANDO: "<<op<<" "<<dirVirtual<<" "<<nombreProceso<<" "<< bitLecMod<<endl;
+                cout<<endl<<"COMANDO: "<<op<<" "<<dirVirtual<<" "<<nombreProceso<<" "<< bitLecMod<<endl;
                 int pos;
                 for(int i=0; i< procesosSesion.size(); i++)
                 {
                     if(procesosSesion[i].nombreProceso == nombreProceso){
                         //Si el proceso coincide con el solicitado
-                        if(procesosSesion[i].tamano <= dirVirtual){
+                        if(procesosSesion[i].tamano <= dirVirtual && procesosSesion[i].tamano>=0){
                             //Si esl tamaño del proceso es mayor a la direccion virtual
                             acceso =true;//Si se acceso =TRUE
                             accesarProceso = RAM.accesarProceso(dirVirtual,nombreProceso,Pag1,Pag2);
@@ -189,27 +183,24 @@ int main()
                 }
             }
             else
-            {
+            {//Si la direccion Virtual no
                 cout<<"COMANDO NO VALIDO: "<<operacion<<endl;
                 sscomando.str("");
+                sscomando.clear();
             }
+
         }
         else if(op == "L")
         {//Operacion de liberacion de memoria, ocupada por un proceso
             acceso =false;
             sscomando >> nombreProceso;//ArchEntrada >> nombreProceso;
-            cout<<"COMANDO: "<<op<<" "<<nombreProceso<<endl;
+            cout<<endl<<"COMANDO: "<<op<<" "<<nombreProceso<<endl;
             for(int i=0; i < procesosSesion.size();i++)
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso && procesosSesion[i].tiempoSalida == NULL)
                     {
-                        cout<<"HOLAAA PROCESO "<<procesosSesion[i].nombreProceso<<endl;
-                        cout<<"PROCESO(L) "<<procesosSesion[i].tiempoSalida<<endl;
                         RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
-                        cout<<"PROCESO(L) Antes CLOCK() "<<procesosSesion[i].tiempoSalida<<endl;
                         procesosSesion[i].tiempoSalida = clock();
-                        cout<<"PROCESO(L) DESPUES CLOCK() "<<procesosSesion[i].tiempoSalida<<endl;
-                        cout<<"PROCESO LIBERADO "<<procesosSesion[i].nombreProceso<<endl;
                         acceso =true;
                         break;
                     }
@@ -217,35 +208,35 @@ int main()
             if(!acceso){
                 cout<<"Proceso: "<< nombreProceso <<", no se ha declarado"<<endl;
             }
+
         }
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
-            cout<<op<<" RESUMEN DE INTRUCCIONES"<<endl;
+            cout<<endl<<op<<" RESUMEN DE INTRUCCIONES"<<endl;
             cout<<"******************************"<<endl;
-            double contProcesosTerminados=0;
-            long double turnaroundProceso;
+            double contProcesosTerminados=0; //Contador de procesos liberados, para Turnaround Promedio
+            long double turnaroundProceso; //turnaround de cada proceso
             //Finaliza una secuencia de isnturcciones
             for(int i=0; i < procesosSesion.size();i++)
             {
-                /*cout<<procesosSesion[i].tiempoSalida<<endl;
-                cout<<procesosSesion[i].tiempollegada<<endl;*/
                 if(procesosSesion[i].tiempoSalida != NULL)
-                {
+                {//Si ya se habia liberado(tiene tiempoSalida)
                     contProcesosTerminados++;
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
+
                     cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
                     cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
                     cout<<" PageFaults: "<<procesosSesion[i].numPageFaults<<endl;
                     turnaroundTotal += turnaroundProceso;
                 }
                 else
-                {
-                    cout<<"PROCESO ANTES CLOCK() "<<procesosSesion[i].tiempoSalida<<endl;
+                {//Si no se ha liberado( NO tiene tiempoSalida)
+                    //Se le fija un tiempoSalida
                     procesosSesion[i].tiempoSalida = clock();
-                    cout<<"PROCESO DESPUES CLOCK() "<<procesosSesion[i].tiempoSalida<<endl;
                     nombreProceso = procesosSesion[i].nombreProceso;
-                    cout<<"PROCESO "<<nombreProceso<<endl;
+                    //Se manda liberar
                     RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
+                    //Se toma en cuenta en el resumen de sesion
                     contProcesosTerminados++;
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
                     cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
@@ -254,24 +245,37 @@ int main()
                     turnaroundTotal += turnaroundProceso;
                 }
             }
+            //Limpia el vector de proceso que se habian definido
             procesosSesion.clear();
-            cout<<"Turnaround Promedio: "<<(turnaroundTotal / contProcesosTerminados)<<endl;
-            cout<<"Total Swapp-in's: "<< RAM.getTotalSwapIns()<<endl;
-            cout<<"Total Swapp-out's: "<< RAM.getTotalSwapOuts()<<endl;
-            RAM.resetTotalSwapIns();
-            RAM.resetTotalSwapOuts();
-            cout<<"******************************"<<endl;
+            //Resto de datos de la sesion
+            if(contProcesosTerminados != 0)
+            {//Si al menos hubo proceso
+                cout<<"Turnaround Promedio: "<<(turnaroundTotal / contProcesosTerminados)<<endl;
+                cout<<"Total Swapp-in's: "<< RAM.getTotalSwapIns()<<endl;
+                cout<<"Total Swapp-out's: "<< RAM.getTotalSwapOuts()<<endl;
+                RAM.resetTotalSwapIns();
+                RAM.resetTotalSwapOuts();
+                cout<<"******************************"<<endl;
+            }
+            else
+            {
+                cout<<"NO SE CARGO NINGUN PROCESO"<<endl;
+                cout<<"******************************"<<endl;
+            }
 
         }
         else if(op == "E")
         {//Terminacion del programa
-            cout<<op<<" FIN DE PROGRAMA"<<endl;
+            cout<<endl<<op<<" FIN DE PROGRAMA"<<endl;
         }
         else if(op == "ERROR")
         {//Mensaje de error al recibir un COMANDO no registrado como valido
-            cout<<"Operacion invalida: "<<operacion<<" "<<endl;
+            cout<<endl<<" Operacion invalida: "<<operacion<<" "<<endl;
             sscomando.str("");
+            sscomando.clear();
         }
+
+
     }
 
     ArchEntrada.close();
