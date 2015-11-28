@@ -227,7 +227,7 @@ int main()
                 {//Si ya se habia liberado(tiene tiempoSalida)
                     contProcesosTerminados++;
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
-
+                    turnaroundProceso = ( turnaroundProceso ) / (double) CLOCKS_PER_SEC;
                     cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
                     cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
                     cout<<" PageFaults: "<<procesosSesion[i].numPageFaults<<endl;
@@ -242,7 +242,9 @@ int main()
                     RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
                     //Se toma en cuenta en el resumen de sesion
                     contProcesosTerminados++;
+
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
+                    turnaroundProceso = ( turnaroundProceso ) / (double) CLOCKS_PER_SEC;
                     cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
                     cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
                     cout<<" PageFaults: "<<procesosSesion[i].numPageFaults<<endl;
