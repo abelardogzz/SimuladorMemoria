@@ -257,7 +257,7 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
   if (vectorPaginasLiberadas.size()!=0){
     int inicio=vectorPaginasLiberadas[0].marcoPagina;
     int final=-1;
-    cout << "Memoria - Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
+    cout << "Memoria - Se liberaron los siguientes marcos de memoria real que eran ocupados por el proceso " + nombreProceso << endl;
     //Este for imprime que marcos de pagina se asignaron
     for(std::vector<int>::size_type i = 0; i != vectorPaginasLiberadas.size(); i++) {
       struct Pagina marco = vectorPaginasLiberadas[i];
