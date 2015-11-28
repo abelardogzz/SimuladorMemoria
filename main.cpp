@@ -1,3 +1,17 @@
+/*
+Programa Sistemas Operativos
+Simulador de Memoria.
+Utilizando Politica de Reemplazo FCFS
+Con una memoria real de 2048 de capacidad y memoria secundaria de 4096
+Autores del programa: Equipo 4.1
+Abelardo González A01195884
+Eduardo Serna A1196007
+Ruben Hernandez A01175209
+Antonio Delgado A01049501
+
+*/
+
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
