@@ -244,6 +244,7 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
 {
   // vector <struct Pagina>  *vectorPaginasLiberadas= &paginasLiberadasMemoria;
   vector <struct Pagina>  vectorPaginasLiberadas;
+  vector <struct Pagina>  vectorPaginasLiberadasDisco;
   //Se hace un ciclo en donde se buscan todas las paginas del proceso
   for (int i=0;i<256;i++){
     //Se busca el proceso y su pagina, para saber en donde esta alocado
@@ -253,34 +254,38 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
           this->paginasLibres++;
       }
   }
-  int inicio=vectorPaginasLiberadas[0].marcoPagina;
-  int final=-1;
-  cout << "Memoria - Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
-  //Este for imprime que marcos de pagina se asignaron
-  for(std::vector<int>::size_type i = 0; i != vectorPaginasLiberadas.size(); i++) {
-    struct Pagina marco = vectorPaginasLiberadas[i];
-    if (inicio+1==vectorPaginasLiberadas[i].marcoPagina){
-      final = vectorPaginasLiberadas[i].marcoPagina;
-    }
-    else if (inicio+1!=vectorPaginasLiberadas[i].marcoPagina && final==-1){
-      cout << "[" + to_string(inicio) + "-";
-    }
-    else if (inicio+1!=vectorPaginasLiberadas[i].marcoPagina && final!=-1){
-      cout <<  to_string(final) + "]";
-      inicio = vectorPaginasLiberadas[i+1].marcoPagina;
-      cout << "[" + to_string(inicio) + "-";
-      final = -1;
-    }
+  if (vectorPaginasLiberadas.size()!=0){
+    int inicio=vectorPaginasLiberadas[0].marcoPagina;
+    int final=-1;
+    cout << "Memoria - Se Liberaron los siguientes marcos de memoria del proceso " + nombreProceso << endl;
+    //Este for imprime que marcos de pagina se asignaron
+    for(std::vector<int>::size_type i = 0; i != vectorPaginasLiberadas.size(); i++) {
+      struct Pagina marco = vectorPaginasLiberadas[i];
+      if (inicio+1==vectorPaginasLiberadas[i].marcoPagina){
+        final = vectorPaginasLiberadas[i].marcoPagina;
+      }
+      else if (inicio+1!=vectorPaginasLiberadas[i].marcoPagina && final==-1){
+        cout << "[" + to_string(inicio) + "-";
+      }
+      else if (inicio+1!=vectorPaginasLiberadas[i].marcoPagina && final!=-1){
+        cout <<  to_string(final) + "]";
+        inicio = vectorPaginasLiberadas[i].marcoPagina;
+        cout << "[" + to_string(inicio) + "-";
+        final = -1;
+      }
 
-    if (i == vectorPaginasLiberadas.size()-1){
-      final = vectorPaginasLiberadas[i].marcoPagina;
-      cout <<  to_string(final) + "]";
-    }
+      if (i == vectorPaginasLiberadas.size()-1){
+        final = vectorPaginasLiberadas[i].marcoPagina;
+        cout <<  to_string(final) + "]";
+      }
 
-    inicio = vectorPaginasLiberadas[i].marcoPagina;
+      inicio = vectorPaginasLiberadas[i].marcoPagina;
+    }
+    cout << endl;
+
   }
-  cout << endl;
-  //disco.liberarProceso(&paginasLiberadasDisco,nombreProceso);
+  disco.liberarProceso(vectorPaginasLiberadasDisco,nombreProceso);
+
 
 }
 
