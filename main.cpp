@@ -90,7 +90,7 @@ int main()
     time_t tiempoaux,tiempo;
     int bitLecMod;
     long double turnaroundTotal;//8====================================================================D
-    bool acceso=false, accesarProceso=false;
+    bool acceso=false, accesarProceso=false, repetido =false;
     stringstream sscomando;
 
 
@@ -122,30 +122,28 @@ int main()
             //cout<<"VALOR DE BYTES(VALIDADO) "<<isdigit(bytes)<<endl;
             if(bytes>0)//if(isdigit(bytes))
             {
+                repetido = false;
                 sscomando>> nombreProceso;//ArchEntrada >> nombreProceso;
+                for(int i=0;i<procesosSesion.size();i++)
+                {
+                    if(procesosSesion[i].nombreProceso == nombreProceso)
+                        repetido = true;
+                }
                 if(bytes>2048 || bytes <= 0)
                     cout<<"Proceso: "<<nombreProceso<<" No cabe en memoria"<<endl;
-                else
+                else if(!repetido)
                 {
                     cout<<"COMANDO: "<<op<<" "<<bytes<<" "<<nombreProceso<<endl;
                     RAM.cargarProceso(bytes,nombreProceso,paginasSwappeadas);
                     //Agregacion al vector de procesos
                     Proceso pro;
                     pro.nombreProceso = nombreProceso;
-
-                    /*
-                    time(&tiempo);
-                    struct tm *auxy = localtime(&tiempo);
-                    tiempo = mktime((auxy));
-                    //pro.tiempollegada = localtime(&tiempoaux);*/
-
                     pro.tiempollegada = clock();
-
-                    //cout<<"TIEMPO LLEGADA "<< ctime(&tiempo);
-                    //cout<<"TIEMPO LLEGADA "<< clock();
 
                     procesosSesion.push_back(pro);
                 }
+                else
+                    cout<<"COMANDO NO VALIDO (REPETIDO):"<< operacion<<endl;
             }
             else
             {
@@ -205,9 +203,13 @@ int main()
             {
                 if(procesosSesion[i].nombreProceso == nombreProceso && procesosSesion[i].tiempoSalida == NULL)
                     {
-
+                        cout<<"HOLAAA PROCESO "<<procesosSesion[i].nombreProceso<<endl;
+                        cout<<"PROCESO(L) "<<procesosSesion[i].tiempoSalida<<endl;
                         RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
+                        cout<<"PROCESO(L) Antes CLOCK() "<<procesosSesion[i].tiempoSalida<<endl;
                         procesosSesion[i].tiempoSalida = clock();
+                        cout<<"PROCESO(L) DESPUES CLOCK() "<<procesosSesion[i].tiempoSalida<<endl;
+                        cout<<"PROCESO LIBERADO "<<procesosSesion[i].nombreProceso<<endl;
                         acceso =true;
                         break;
                     }
@@ -224,7 +226,7 @@ int main()
             long double turnaroundProceso;
             //Finaliza una secuencia de isnturcciones
             for(int i=0; i < procesosSesion.size();i++)
-            { //cout<<"PROCESO "<<i<<endl;
+            {
                 /*cout<<procesosSesion[i].tiempoSalida<<endl;
                 cout<<procesosSesion[i].tiempollegada<<endl;*/
                 if(procesosSesion[i].tiempoSalida != NULL)
@@ -238,8 +240,11 @@ int main()
                 }
                 else
                 {
+                    cout<<"PROCESO ANTES CLOCK() "<<procesosSesion[i].tiempoSalida<<endl;
                     procesosSesion[i].tiempoSalida = clock();
+                    cout<<"PROCESO DESPUES CLOCK() "<<procesosSesion[i].tiempoSalida<<endl;
                     nombreProceso = procesosSesion[i].nombreProceso;
+                    cout<<"PROCESO "<<nombreProceso<<endl;
                     RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
                     contProcesosTerminados++;
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
