@@ -11,50 +11,55 @@ using namespace std;
 #include "Disco.h"
 
 
+/**
+    Valida la estructura de un comando
+
+    @comando el comando completo que se recibio de la linea
+
+    @return bool TRUE si cuenta con la estructura de un comando correcto, FALSE no es un comando incorrecto
+  */
 bool ValidaOp(string comando)
 {
     string operacion;
-    string auxLectura,aux;
     int numIteraciones = 0;
     string comandoEsperado;
     int blankSpaces = 0;
     bool malComando =false;
-    stringstream sscomando;
-    sscomando <<comando;
+    stringstream sscomando;//Variable para crear un stream de datos
+    sscomando <<comando; //Se vacia el comando recibido en el stream
 
-    while(sscomando >> operacion && !malComando){
-            //cout<<"******OPERACION: "<<operacion<<endl;
+    while(sscomando >> operacion && !malComando){//Mientras tenga datos en el stream
+            //Se leen uno a uno, tomando un conteo de los argumentos mandados
             if(operacion == " ")
                 blankSpaces++;
-            else if (operacion == "P" && numIteraciones == 0)
+            else if (operacion == "P" && numIteraciones == 0) //Si es una P se espera cargar un proceso
                 comandoEsperado = "P";
-            else if (operacion == "A" && numIteraciones == 0)
+            else if (operacion == "A" && numIteraciones == 0) //Si es una A se espera accesar un proceso
                 comandoEsperado = "A";
-            else if (operacion == "L" && numIteraciones == 0)
+            else if (operacion == "L" && numIteraciones == 0) //Si es una L se espera liberar un proceso
                 comandoEsperado = "L";
-            else if (operacion == "F" && numIteraciones == 0)
+            else if (operacion == "F" && numIteraciones == 0) //Si es una F se espera resumen de sesion
                 comandoEsperado = "F";
-            else if (operacion == "E" && numIteraciones == 0)
+            else if (operacion == "E" && numIteraciones == 0) //Si es una E se espera terminar programa
                 comandoEsperado = "E";
-            /*else
-                malComando = true;*/
+
         numIteraciones++;
         blankSpaces++;
 
     }
-
-        if(comandoEsperado == "P" && blankSpaces== 3)
+        //Condicion que decide si fue correcto o no  la cantidad de argumentos, contando la opcion
+        if(comandoEsperado == "P" && blankSpaces== 3)//Si se espera una P, tiene 3 argumentos
             return true;
-        else if(comandoEsperado == "A" && blankSpaces == 4)
+        else if(comandoEsperado == "A" && blankSpaces == 4)//Si se espera una A tiene 4 argumentos
             return true;
-        else if(comandoEsperado == "L" && blankSpaces == 2)
+        else if(comandoEsperado == "L" && blankSpaces == 2)//Si se espera una L tiene 2 argumentos
             return true;
-        else if(comandoEsperado == "F" && blankSpaces == 1)
+        else if(comandoEsperado == "F" && blankSpaces == 1)//Si se espera una F tiene 1 argumento
             return true;
-        else if(comandoEsperado == "E" && blankSpaces == 1)
+        else if(comandoEsperado == "E" && blankSpaces == 1)//Si se espera una E tiene 1 argumento
             return true;
-        else if(comandoEsperado == "P" && blankSpaces != 3)
-            {cout<<"ERROR EL COMANDO P TIENE DOS PARAMETROS"<<endl; return false; }
+        else if(comandoEsperado == "P" && blankSpaces != 3)             //En caso contrario, se regresa un mensaje
+            {cout<<"ERROR EL COMANDO P TIENE DOS PARAMETROS"<<endl; return false; }//notificando la forma correcta
         else if(comandoEsperado == "A" && blankSpaces != 4)
             {cout<<"ERROR EL COMANDO A TIENE TRES PARAMETROS"<<endl; return false; }
         else if(comandoEsperado == "L" && blankSpaces != 2)
@@ -64,9 +69,8 @@ bool ValidaOp(string comando)
         else if(comandoEsperado == "E" && blankSpaces != 1)
             {cout<<"ERROR EL COMANDO P TIENE DOS PARAMETROS"<<endl; return false; }
         else
-            {/*cout<<"ERROR con el comando: "<<comando<<endl;*/ return false; }
-
-
+            {/*cout<<"ERROR con el comando: "<<comando<<endl;*/ return false; }//Si no es ninguna, solo regresa false
+            //El resto del programa se administra en main()
 }
 
 
