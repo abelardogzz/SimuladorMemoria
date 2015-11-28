@@ -93,7 +93,7 @@ int main()
     int bytes,dirVirtual;
     time_t tiempoaux,tiempo;
     int bitLecMod;
-    long double turnaroundTotal;//8====================================================================D
+    long double turnaroundTotal;
     bool acceso=false, accesarProceso=false, repetido =false;
     stringstream sscomando;
 
@@ -165,11 +165,11 @@ int main()
                     if(procesosSesion[i].nombreProceso == nombreProceso){
                         //Si el proceso coincide con el solicitado
                         if(procesosSesion[i].tamano <= dirVirtual && procesosSesion[i].tamano>=0){
-                            //Si esl tamaño del proceso es mayor a la direccion virtual
+                            //Si esl tamaï¿½o del proceso es mayor a la direccion virtual
                             acceso =true;//Si se acceso =TRUE
                             accesarProceso = RAM.accesarProceso(dirVirtual,nombreProceso,Pag1,Pag2);
                             //Accesar, Lectura o modificacion, numero de paginas de swap
-                            pos = i;//Guarda posicion, para asignar despues PageFaults, si hubó
+                            pos = i;//Guarda posicion, para asignar despues PageFaults, si hubï¿½
                             break;
                         }
                         else//
