@@ -406,10 +406,14 @@ int Memoria::getTotalSwapOuts(){
 
 void Memoria::resetTotalSwapIns(){
   this->totalSwapIns = 0;
+   queue<struct Pagina> empty;
+   swap(this->queuePaginas, empty);
 }
 
 void Memoria::resetTotalSwapOuts(){
   this->totalSwapOuts = 0;
+  queue<struct Pagina> empty;
+  swap(this->queuePaginas, empty);
 }
 
 
