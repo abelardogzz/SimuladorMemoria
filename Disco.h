@@ -157,7 +157,6 @@ void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string 
 	//Se inicializa el vector de paginas liberadas
 	vector <struct Pagina> *vectorPaginas = &paginasLiberadasSwap;
 	//Se inicializa un booleano que nos servira para indicarnos si se encontraron paginas con el nombre del proceso.
-	bool seEncontro = false;
 	for(int posicion=0; posicion<512; posicion++)
 	{
 		if (tablaPaginas[posicion].pagina.nombreProceso == nombrePro)
@@ -175,12 +174,10 @@ void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string 
 			//Agregamos la pagina que liberamos al vector
 			vectorPaginas->push_back(tablaPaginas[posicion].pagina);
 			//Prueba de funcionalidad de paginas liberadas
-			cout<<"Memoria Disco - Se registro el proceso "<<tablaPaginas[posicion].pagina.nombreProceso<<" en la lista de paginas liberadas."<<endl;
+			cout << "Memoria Disco - Se liberaron los siguientes marcos de memoria swap que eran ocupados por el proceso " 
+			+ tablaPaginas[posicion].pagina.nombreProceso << endl;
 		}
 	}
-	//Si no se encontraron resultados, se notifica.
-	if(!seEncontro)
-		cout<<"No se encontro el Proceso"<<endl;
 }
 
 #endif // DISCO_H_INCLUDED DISCO_H_INCLUDED
