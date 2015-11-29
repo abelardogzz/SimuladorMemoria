@@ -106,7 +106,6 @@ struct Pagina * Disco::sacarDeAreaSwap(string nombrePro, int numeroPag)
 		){
 				seEncontro = true;
 				paginaSacada = &tablaPaginas[i].pagina;
-				cout << paginaSacada->numeroPagina << endl;
 				tablaPaginas[i].estaVacio = true;
 				//Prueba de funcionalidad De liberar tabla de paginas.
 				cout<<"Memoria Swap - Se libero el marco de pagina "<<i<<" que contenia la pagina "<<tablaPaginas[i].pagina.numeroPagina<<" del proceso "
