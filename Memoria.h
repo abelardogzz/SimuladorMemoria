@@ -260,7 +260,7 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
     bool siguienteEsInicio = false;
     //Este for imprime que marcos de pagina se asignaron
     if (vectorPaginasLiberadas.size() == 1){
-      cout << inicio << endl;
+      //cout << inicio << endl;
     }
 
     for(std::vector<int>::size_type i = 1; i != vectorPaginasLiberadas.size(); i++) {
