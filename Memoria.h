@@ -253,7 +253,6 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
   }
 
   //Tenemos que borrar del queue de paginas las paginas que del proceso liberado
-  cout << this->queuePaginas.size() << endl;
   vector <struct Pagina> nuevoQueuePaginas;
   for (int j=0; j<this->queuePaginas.size(); j++){
     struct Pagina pag = this->queuePaginas[j];
@@ -265,10 +264,6 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
   }
   //Se pasa el nuevo queue de paginas a queue paginas
   queuePaginas.swap(nuevoQueuePaginas);
-
-  cout << this->queuePaginas.size() << endl;
-
-
   if (vectorPaginasLiberadas.size()!=0){
 
     cout << "Memoria - Se liberaron los siguientes marcos de memoria real que eran ocupados por el proceso " + nombreProceso << endl;
