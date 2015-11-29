@@ -90,7 +90,7 @@ public:
 
 private:
     //Atributos privados de la clase
-    queue <struct Pagina> queuePaginas; //Este simulador de memoria utiliza un FIFO para sacar paginas
+    vector <struct Pagina> queuePaginas; //Este simulador de memoria utiliza un FIFO para sacar paginas
     struct Espacio tablaPaginas[256]; //En esta tabla se simula la tabla de paginas
     string memoria[2048];//Esta es la "memoria"
     int paginasLibres;//La cantidad de paginas libres en el sistema
@@ -249,8 +249,26 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
           this->tablaPaginas[i].estaVacio = true;
           vectorPaginasLiberadas.push_back(this->tablaPaginas[i].pagina);
           this->paginasLibres++;
-      }
+    }
   }
+
+  //Tenemos que borrar del queue de paginas las paginas que del proceso liberado
+  cout << this->queuePaginas.size() << endl;
+  vector <struct Pagina> nuevoQueuePaginas;
+  for (int j=0; j<this->queuePaginas.size(); j++){
+    struct Pagina pag = this->queuePaginas[j];
+    if (pag.nombreProceso != nombreProceso){
+      nuevoQueuePaginas.push_back(pag);
+    }
+
+
+  }
+  //Se pasa el nuevo queue de paginas a queue paginas
+  queuePaginas.swap(nuevoQueuePaginas);
+
+  cout << this->queuePaginas.size() << endl;
+
+
   if (vectorPaginasLiberadas.size()!=0){
 
     cout << "Memoria - Se liberaron los siguientes marcos de memoria real que eran ocupados por el proceso " + nombreProceso << endl;
@@ -295,7 +313,7 @@ void Memoria::swapOut(int numSwapsNecesarios,vector <struct Pagina> *paginasSwap
   for (int i=0;i<numSwapsNecesarios;i++){
 
       struct Pagina paginaASacar = this->queuePaginas.front();
-      this->queuePaginas.pop();
+      this->queuePaginas.erase(this->queuePaginas.begin());
       this->tablaPaginas[paginaASacar.marcoPagina].estaVacio = true;
       vecPaginasSwappeadas->push_back(paginaASacar);
 
@@ -342,7 +360,7 @@ void Memoria::meterPaginasDeProceso(int bytesProceso,string nombreProceso,vector
           //Se decrementa en uno el contador de paginas libres
           this->paginasLibres--;
           //Meto en la queue esta pagina, pues es la que sacaremos si es que se ocupa hacer un swap out
-          this->queuePaginas.push(tablaPaginas[posicion].pagina);
+          this->queuePaginas.push_back(tablaPaginas[posicion].pagina);
 
           marcosDePagina->push_back(tablaPaginas[posicion].pagina);
 
@@ -381,7 +399,7 @@ void Memoria::swapIn(string nombreProceso,int numPagina, int dirVirtual){
         this->tablaPaginas[i].estaVacio = false;
         this->paginasLibres--;
         //Meto en la queue esta pagina, pues es la que sacaremos si es que se ocupa hacer un swap out
-        this->queuePaginas.push(tablaPaginas[i].pagina);
+        this->queuePaginas.push_back(tablaPaginas[i].pagina);
 
         cout << "Memoria - " <<"Se guardó la página " << this->tablaPaginas[i].pagina.numeroPagina
         <<" del proceso "<< this->tablaPaginas[i].pagina.nombreProceso << " en el marco de memoria " << i<<endl;
@@ -405,14 +423,12 @@ int Memoria::getTotalSwapOuts(){
 
 void Memoria::resetTotalSwapIns(){
   this->totalSwapIns = 0;
-   queue<struct Pagina> empty;
-   swap(this->queuePaginas, empty);
+  this->queuePaginas.clear();
 }
 
 void Memoria::resetTotalSwapOuts(){
   this->totalSwapOuts = 0;
-  queue<struct Pagina> empty;
-  swap(this->queuePaginas, empty);
+  this->queuePaginas.clear();
 }
 
 
