@@ -37,7 +37,7 @@ public:
 	/**
     Se libera un proceso de Disco y se registra en un vector de referencia.
 
-    @paginasLiberadasSwap direccion para hacer referencia al vector de las paginas liberadas, en este se guardan 
+    @paginasLiberadasSwap direccion para hacer referencia al vector de las paginas liberadas, en este se guardan
     las paginas que fueron liberadas.
 
     @nombrePro nombre de los procesos que se busca liberar.
@@ -171,9 +171,7 @@ void Disco::liberarProceso(vector <struct Pagina> &paginasLiberadasSwap, string 
 			areaSwap[(posicion*8)+7] = "";
 			//Agregamos la pagina que liberamos al vector
 			vectorPaginas->push_back(tablaPaginas[posicion].pagina);
-			//Prueba de funcionalidad de paginas liberadas
-			cout << "Memoria Disco - Se liberaron los siguientes marcos de memoria swap que eran ocupados por el proceso " 
-			+ tablaPaginas[posicion].pagina.nombreProceso << endl;
+
 		}
 	}
 }
