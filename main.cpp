@@ -230,6 +230,23 @@ int main()
         }
         else if(op == "F")
         {//Fin de un secuencia de instrucciones, despliega un brief de lo realizado
+            for(int i=0; i < procesosSesion.size();i++)
+            {//for para los procesos sin (L) antes de (F)
+                if(procesosSesion[i].tiempoSalida == NULL)//Si no se ha liberado(NO tiene tiempoSalida)
+                {//Si existe al menos un proceso no Liberado
+                    if(!acceso)//Se despliega la seccion de proceso Liberados antes de Finalizar sesion
+                    {
+                        cout<<endl<<op<<"****PRIMERO SE LIBERAN TODOS LOS PROCESOS ********"<<endl;
+                        acceso=true;//Variable para no imprimir el letrero muchas veces
+                    }
+                    //Se le fija un tiempoSalida
+                    procesosSesion[i].tiempoSalida = clock();
+                    nombreProceso = procesosSesion[i].nombreProceso;
+                    //Se manda liberar
+                    RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
+                }
+            }
+
             cout<<endl<<op<<" RESUMEN DE INTRUCCIONES"<<endl;
             cout<<"******************************"<<endl;
             double contProcesosTerminados=0; //Contador de procesos liberados, para Turnaround Promedio
@@ -240,23 +257,6 @@ int main()
                 if(procesosSesion[i].tiempoSalida != NULL)
                 {//Si ya se habia liberado(tiene tiempoSalida)
                     contProcesosTerminados++;
-                    turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
-                    turnaroundProceso = ( turnaroundProceso ) / (double) CLOCKS_PER_SEC;
-                    cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
-                    cout<<" Proceso: "<< procesosSesion[i].nombreProceso;
-                    cout<<" PageFaults: "<<procesosSesion[i].numPageFaults<<endl;
-                    turnaroundTotal += turnaroundProceso;
-                }
-                else
-                {//Si no se ha liberado( NO tiene tiempoSalida)
-                    //Se le fija un tiempoSalida
-                    procesosSesion[i].tiempoSalida = clock();
-                    nombreProceso = procesosSesion[i].nombreProceso;
-                    //Se manda liberar
-                    RAM.liberarProceso(nombreProceso,paginasLiberadasEnSwap,paginasLiberadasEnMemoria);
-                    //Se toma en cuenta en el resumen de sesion
-                    contProcesosTerminados++;
-
                     turnaroundProceso = difftime(procesosSesion[i].tiempoSalida,procesosSesion[i].tiempollegada);
                     turnaroundProceso = ( turnaroundProceso ) / (double) CLOCKS_PER_SEC;
                     cout<<"Turnaround: "<< ((turnaroundProceso)) << " segundos ";
