@@ -176,8 +176,10 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   vector <struct Pagina> marcosDePaginaAsignados;
   this->meterPaginasDeProceso(bytesProceso,nombreProceso,marcosDePaginaAsignados);
   int inicio=marcosDePaginaAsignados[0].marcoPagina;
+  int anterior=inicio;
   int siguienteEsperado = inicio+1;
   cout << "Memoria - Se asignaron los siguientes marcos de memoria al proceso " + nombreProceso << endl;
+  //cout << marcosDePaginaAsignados.size() << endl;
   bool siguienteEsInicio = false;
   if (marcosDePaginaAsignados.size() == 1){
     cout << inicio << endl;
@@ -185,6 +187,7 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
   //Este for imprime que marcos de pagina se asignaron
   for(std::vector<int>::size_type i = 1; i != marcosDePaginaAsignados.size(); i++) {
     struct Pagina marco = marcosDePaginaAsignados[i];
+    //cout << marco.marcoPagina << endl;
     //cout << "PAG " << marcosDePaginaAsignados[i].marcoPagina << endl;
 
     if (siguienteEsInicio){
@@ -192,13 +195,19 @@ void Memoria::cargarProceso(int bytesProceso,string nombreProceso,vector <struct
         siguienteEsInicio = false;
     }
 
-    if (siguienteEsperado != marcosDePaginaAsignados[i].marcoPagina || i == marcosDePaginaAsignados.size() -1 ){
+    if ((siguienteEsperado != marcosDePaginaAsignados[i].marcoPagina || i == marcosDePaginaAsignados.size() -1)  && anterior==marcosDePaginaAsignados[i].marcoPagina-1){
       cout << "[" + to_string(inicio) + "-";
       cout <<  to_string(marcosDePaginaAsignados[i].marcoPagina) + "]";
       siguienteEsInicio = true;
     }
-
+    else if ((siguienteEsperado != marcosDePaginaAsignados[i].marcoPagina || i == marcosDePaginaAsignados.size() -1)  && anterior!=marcosDePaginaAsignados[i].marcoPagina-1){
+      cout << inicio << ",";
+      inicio = marcosDePaginaAsignados[i].marcoPagina;
+      siguienteEsInicio = false;
+    }
+    anterior = marcosDePaginaAsignados[i].marcoPagina;
     siguienteEsperado = marcosDePaginaAsignados[i].marcoPagina + 1;
+
 
   }
   cout << endl;
@@ -269,6 +278,7 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
     cout << "Memoria - Se liberaron los siguientes marcos de memoria real que eran ocupados por el proceso " + nombreProceso << endl;
     //Este for imprime que marcos de pagina se asignaron
     int inicio=vectorPaginasLiberadas[0].marcoPagina;
+    int anterior=inicio;
     int siguienteEsperado = inicio+1;
     bool siguienteEsInicio = false;
     //Este for imprime que marcos de pagina se asignaron
@@ -278,18 +288,23 @@ void Memoria::liberarProceso(string nombreProceso,vector <struct Pagina> &pagina
 
     for(std::vector<int>::size_type i = 1; i != vectorPaginasLiberadas.size(); i++) {
       struct Pagina marco = vectorPaginasLiberadas[i];
-
       if (siguienteEsInicio){
         inicio = vectorPaginasLiberadas[i].marcoPagina;
           siguienteEsInicio = false;
       }
 
-      if (siguienteEsperado != vectorPaginasLiberadas[i].marcoPagina || i == vectorPaginasLiberadas.size() -1 ){
+      if ( (siguienteEsperado != vectorPaginasLiberadas[i].marcoPagina || i == vectorPaginasLiberadas.size() -1) && anterior==vectorPaginasLiberadas[i].marcoPagina-1 ){
         cout << "[" + to_string(inicio) + "-";
         cout <<  to_string(vectorPaginasLiberadas[i].marcoPagina) + "]";
         siguienteEsInicio = true;
       }
 
+      else if ((siguienteEsperado != vectorPaginasLiberadas[i].marcoPagina || i == vectorPaginasLiberadas.size() -1)  && anterior!=vectorPaginasLiberadas[i].marcoPagina-1){
+        cout << inicio << ",";
+        inicio = vectorPaginasLiberadas[i].marcoPagina;
+        siguienteEsInicio = false;
+      }
+      anterior = vectorPaginasLiberadas[i].marcoPagina;
       siguienteEsperado = vectorPaginasLiberadas[i].marcoPagina + 1;
 
     }
